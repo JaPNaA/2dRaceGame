@@ -1,2 +1,2 @@
 # 2dRaceGame
-(Project suggested by @RoxasBTG)[https://github.com/roxasbtg]
+Project suggested by <a href="https://github.com/roxasbtg"> @RoxasBTG </a>
