@@ -36,8 +36,8 @@ http.createServer(function(q, r) {
                 c
                     .toString()
                     .replace(
-                        /{error}/,
-                        [e.toString(), e.fileName, e.lineNumber].join("\n")
+                        /\{error\}/,
+                        [e.message, e.fileName, e.lineNumber].join("\n")
                     )
             );
         });
