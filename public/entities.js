@@ -40,7 +40,7 @@ class Player extends Entity {
     tick(tt) {
         this.physics(tt);
         this.kbControl(tt);
-        if(this.y > this.game.map.height + 10){
+        if(this.respawn && this.y > this.game.map.height + 10){
             let sb = this.game.map.startBlock;
             this.x = sb[0];
             this.y = sb[1] - this.height;
