@@ -47,5 +47,7 @@ async function getMap(e) {
         }
         c.push(f);
     }
+    c.width = c[0].length;
+    c.height = c.length;
     return c;
 }

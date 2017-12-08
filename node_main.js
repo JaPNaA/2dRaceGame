@@ -8,9 +8,19 @@ const http = require("http"),
 var port = process.env.PORT || 80,
     server = http.createServer(function(q, r) {
         try {
-            var url = "public" + (q.url.length == 1 ? "/index.html" : q.url),
+            var url = q.url,
                 odt = false,
-                mime = url.split(".");
+                mime;
+            {
+                if (url.length == 1) {
+                    url += "/index.html";
+                }
+                if (url.toLowerCase() == "/leveleditor") {
+                    url = "/levelEditor/index.html";
+                }
+                url = "public" + url;
+            }
+            mime = url.split(".");
             mime = mime[mime.length - 1];
             if (mime == "css") {
                 mime = "text/css";

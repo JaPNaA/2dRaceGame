@@ -10,6 +10,7 @@ class Entity {
         this.vy = 0;
         this.game = g;
         this.gravity = 0.45;
+        this.respawn = false;
     }
     draw(X, cx, cy) {
         //* add animation
@@ -34,10 +35,16 @@ class Player extends Entity {
         };
         this.x = sb[0];
         this.y = sb[1] - this.height;
+        this.respawn = true;
     }
     tick(tt) {
         this.physics(tt);
         this.kbControl(tt);
+        if(this.y > this.game.map.height + 10){
+            let sb = this.game.map.startBlock;
+            this.x = sb[0];
+            this.y = sb[1] - this.height;
+        }
     }
     physics(tt) {
         this.x += this.vx * tt;
