@@ -5,7 +5,7 @@ const http = require("http"),
     openBrowser = require("open"),
     readLine = require("readline");
 
-var port = env.PORT || 80,
+var port = process.env.PORT || 80,
     server = http.createServer(function(q, r) {
         try {
             var url = "public" + (q.url.length == 1 ? "/index.html" : q.url),
