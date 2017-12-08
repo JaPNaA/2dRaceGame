@@ -19,6 +19,9 @@ class Screen {
                 i(e);
             }
         };
+        this.eventListeners = {
+            load: []
+        };
         this.active = true;
         this.sI = 0;
         this.tickLoop = false;
@@ -87,6 +90,18 @@ class Screen {
         this.events[t].push(f);
         return this;
     }
+    addEventListener(e, f){
+        var a = this.eventListeners[e];
+        if(!a) return;
+        a.push(f);
+    }
+    dispatchEvent(e){
+        var a = this.eventListeners[e];
+        if(!a) return;
+        for(let i of a){
+            i(this);
+        }
+    }
 }
 
 class StartScreen extends Screen {
@@ -120,8 +135,10 @@ class StartScreen extends Screen {
 class GameScreen extends Screen {
     constructor(C) {
         super(C);
+        var that = this;
 
         this.game = new Game(this, 0);
+        this.game.addEventListener("load", () => that.dispatchEvent("load"));
         this.obs.push(this.game);
         this.tickLoop = true;
         C.hideMouse = true;

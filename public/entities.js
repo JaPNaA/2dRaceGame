@@ -20,6 +20,11 @@ class Entity {
 class Player extends Entity {
     constructor(g) {
         super(g);
+        var sb = this.game.map.startBlock;
+        if(!sb){
+            throw "Map not loaded, cannot place player";
+        }
+
         this.control = 1;
         this.lastK = {
             u: false,
@@ -27,56 +32,20 @@ class Player extends Entity {
             l: false,
             r: false
         };
+        this.x = sb[0];
+        this.y = sb[1] - this.height;
     }
     tick(tt) {
         this.physics(tt);
         this.kbControl(tt);
     }
     physics(tt) {
-        // this.vy += this.gravity;
-        // for (let i of [
-        //     [1, -1, false],
-        //     [2, 1, false],
-        //     [0, false, -1],
-        //     [3, false, 1]
-        // ]) {
-        //     let a = this.game.block(i[0], this);
-        //     if (a) {
-        //         if (i[1] !== false) {
-        //             if(i[1] < 0){
-        //                 if(this.vx > 0){
-        //                     this.vx = 0;
-        //                 }
-        //             } else {
-        //                 if(this.vx < 0){
-        //                     this.vx = 0;
-        //                 }
-        //             }
-        //             this.x = a[0] + i[1];
-        //         }
-        //         if (i[2] !== false) {
-        //             if(i[2] < 0){
-        //                 if(this.vy > 0){
-        //                     this.vy = 0;
-        //                 }
-        //             } else {
-        //                 if(this.vy < 0){
-        //                     this.vy = 0;
-        //                 }
-        //             }
-        //             this.y = a[1] + i[2];
-        //         }
-        //     }
-        // }
+        this.x += this.vx * tt;
+        this.y += this.vy * tt;
+        this.vx *= 0.995 ** (tt * 1e3);
+        this.vy *= 0.995 ** (tt * 1e3);
+
         var a;
-        if ((a = this.game.block(0, this))) {
-            if (this.vy > 0) {
-                this.vy = 0;
-                this.y = a[1] - this.height;
-            }
-        } else {
-            this.vy += this.gravity;
-        }
         if ((a = this.game.block(1, this))) {
             if (this.vx < 0) {
                 this.vx = 0;
@@ -95,10 +64,16 @@ class Player extends Entity {
                 this.y = a[1] + this.height;
             }
         }
-        this.x += this.vx * tt;
-        this.y += this.vy * tt;
-        this.vx *= 0.995 ** (tt * 1e3);
-        this.vy *= 0.995 ** (tt * 1e3);
+        if ((a = this.game.block(0, this))) {
+            if (this.vy > 0) {
+                this.vy = 0;
+                this.y = a[1] - this.height;
+            }
+            this.grounded = true;
+        } else {
+            this.grounded = false;
+            this.vy += this.gravity;
+        }
     }
     kbControl(tt) {
         if (
@@ -112,7 +87,7 @@ class Player extends Entity {
             b = s * 60;
         if (k[87] || k[38] || k[32]) {
             // up
-            if (this.game.block(0, this)) {
+            if (this.grounded) {
                 this.vy -= this.gravity * 75;
                 // this.vy -= s;
                 this.lastK.u = true;

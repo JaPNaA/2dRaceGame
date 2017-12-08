@@ -7,7 +7,9 @@ class Main {
     }
     game(){
         this.screen = new GameScreen(this.canvas).start();
-        this.screen.addPlayer(1);
+        this.screen.addEventListener("load", function(s){
+            s.addPlayer(1);
+        });
     }
 }
 var main = new Main();

@@ -16,9 +16,25 @@ class Game { // Game class
         this.cameraVY = 0;
         this.cameraFocus = null;
         this.freeCam = false;
+        this.eventListeners = {
+            load: []
+        };
+    }
+    addEventListener(e, f){
+        var a = this.eventListeners[e];
+        if(!a) return;
+        a.push(f);
+    }
+    dispatchEvent(e){
+        var a = this.eventListeners[e];
+        if(!a) return;
+        for(let i of a){
+            i(this);
+        }
     }
     start() {
         this.ready = true;
+        this.dispatchEvent("load");
     }
     draw(X) {
         if (!this.ready) {
@@ -98,51 +114,6 @@ class Game { // Game class
             y1 = Math.floor(o.y),
             y2 = Math.floor(o.y + o.height),
             ns = BLOCKINDEX.NONSOLID;
-        //     f = { x: o.x, y: o.y };
-        //
-        // for (let y = y1; y < y2; y++) {
-        //     for (let x = x1; x < x2; x++) {
-        // if (ns.includes(this.map[y] && this.map[y][x])) continue;
-        // let b = y + 1 - o.y,
-        //     t = o.y + o.height - y,
-        //     l = o.x + o.width - x,
-        //     r = x + 1 - o.x;
-        //
-        // if (t < b && t < l && t < r) {
-        //     f.y = y - o.height;
-        // }
-        // if (b < t && b < l && b < r) {
-        //     f.y = y + 1;
-        // }
-        // if (l < r && l < t && l < b) {
-        //     f.x = x - o.width;
-        // }
-        // if (r < l && r < t && r < b) {
-        //     f.x = x + 1;
-        // }
-        // if (
-        //     o.x < x + 1 &&
-        //     o.x + o.width > x &&
-        //     o.y < y + 1 &&
-        //     o.y + o.height > y
-        // ) {
-        //     if(o.y + o.height < y){ // is above
-        //         r.y = y - o.height;
-        //     } else if(o.y > y + 1){ // is below
-        //         r.y = y + 1;
-        //     }
-        //     if(o.x + o.width < x){ // is left
-        //         r.x = x - o.width;
-        //     } else if(o.x > x + 1) { // is right
-        //         r.x = x + 1;
-        //     }
-        //     break m;
-        // }
-        //     }
-        // }
-        // return f;
-
-        // ns = BLOCKINDEX.NONSOLID;
 
         if (t == 0) {
             if (!this.map[y2]) return false;

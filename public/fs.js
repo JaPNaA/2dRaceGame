@@ -32,12 +32,17 @@ async function getMap(e) {
         }),
         b = a.split("\n"),
         c = [];
-    for (let i of b) {
+    for (let y = 0; y < b.length; y++) {
+        let i = b[y];
         if (!i) continue;
         let r = i.split(","),
             f = [];
-        for (let j of r) {
+        for (let x = 0; x < r.length; x++) {
+            let j = r[x];
             //* parse j
+            if(j == '2'){
+                c.startBlock = [x, y];
+            }
             f.push(j * 1);
         }
         c.push(f);
