@@ -89,6 +89,7 @@ function questionOpenBrowser(e) {
         }
         rl.close();
     });
+    rl.on("close", () => console.log("^C"));
 }
 
 server.listen(port, () => {

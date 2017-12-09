@@ -10,9 +10,9 @@ function getTr(e) {
             ty: innerHeight / 2
         };
     if (innerWidth < innerHeight * 16 / 9) {
-        r.sc = innerHeight / v * 16 / 9;
+        r.sc = window.scale || innerHeight / v * 16 / 9;
     } else {
-        r.sc = innerWidth / v;
+        r.sc = window.scale || innerWidth / v;
     }
     return (getTr.p = r);
 }
@@ -90,7 +90,16 @@ CanvasRenderingContext2D.prototype.uGrid = function() {
     this.sLine(innerWidth / 2, 0, innerWidth / 2, 40 * sc, "#0F0", 2);
     this.sLine(0, innerHeight / 2, 40 * sc, innerHeight / 2, "#0F0", 2);
 };
-CanvasRenderingContext2D.prototype.uBlock = function(x, y, c, sx, sy, sw, sh) {
+CanvasRenderingContext2D.prototype.uBlock = function(
+    x,
+    y,
+    c,
+    sx,
+    sy,
+    sw,
+    sh,
+    o
+) {
     // draw block
     this.sSetup();
 
@@ -109,6 +118,14 @@ CanvasRenderingContext2D.prototype.uBlock = function(x, y, c, sx, sy, sw, sh) {
             1,
             1
         );
+    }
+    if (o && o.outline) {
+        this.beginPath();
+        this.lineWidth = 0.02;
+        this.strokeStyle = "#F00";
+        this.rect(x, y, 1, 1);
+        this.stroke();
+        this.closePath();
     }
 
     this.restore();

@@ -1,4 +1,5 @@
-class Game { // Game class
+class Game {
+    // Game class
     constructor(p, e) {
         var that = this;
         this.screen = p;
@@ -6,7 +7,8 @@ class Game { // Game class
         this.map = [];
         this.entities = [];
         this.ready = false;
-        getMap(e).then(e => { // async function getMap
+        getMap(e).then(e => {
+            // async function getMap
             that.map = e;
             that.start();
         });
@@ -20,15 +22,15 @@ class Game { // Game class
             load: []
         };
     }
-    addEventListener(e, f){
+    addEventListener(e, f) {
         var a = this.eventListeners[e];
-        if(!a) return;
+        if (!a) return;
         a.push(f);
     }
-    dispatchEvent(e){
+    dispatchEvent(e) {
         var a = this.eventListeners[e];
-        if(!a) return;
-        for(let i of a){
+        if (!a) return;
+        for (let i of a) {
             i(this);
         }
     }
@@ -47,17 +49,25 @@ class Game { // Game class
         for (let i of this.entities) {
             i.draw(X, this.cameraX, this.cameraY);
         }
-        for (let y = 0; y < this.map.length; y++) {
-            let a = this.map[y],
-                al = this.map[y].length;
-            for (let x = 0; x < al; x++) {
-                if (a[x] == 0) continue;
-                this.drawBlock(X, x, y, a[x]);
+        // for (let y = 0; y < this.map.height; y++) {
+        //     let a = this.map[y],
+        //         al = this.map.width;
+        //     for (let x = 0; x < al; x++) {
+        //         if (a[x] == 0) continue;
+        //         this.drawBlock(X, x, y, a[x]);
+        //     }
+        // }
+        for (let y = Math.floor(this.cameraY) - 15; y < this.cameraY + 15; y++) {
+            let al = this.map.width;
+            for (let x = Math.floor(this.cameraX) - 15; x < this.cameraX + 15; x++) {
+                let a = this.map.getBlock(x, y);
+                if (!a) continue;
+                this.drawBlock(X, x, y, a);
             }
         }
     }
     tick(tt) {
-        if(!this.ready) return;
+        if (!this.ready) return;
         if (this.cameraFocus && !this.freeCam) {
             let f = this.cameraFocus,
                 s = 15;
@@ -116,9 +126,8 @@ class Game { // Game class
             ns = BLOCKINDEX.NONSOLID;
 
         if (t == 0) {
-            if (!this.map[y2]) return false;
             for (let i = x1; i < x2; i++) {
-                if (!ns.includes(this.map[y2][i])) {
+                if (!ns.includes(this.map.getBlock(i, y2))) {
                     return [i, y2];
                 }
             }
@@ -126,8 +135,7 @@ class Game { // Game class
         }
         if (t == 1) {
             for (let i = y1; i < y2; i++) {
-                if (!this.map[i]) continue;
-                if (!ns.includes(this.map[i][x1])) {
+                if (!ns.includes(this.map.getBlock(x1, i))) {
                     return [x1, i];
                 }
             }
@@ -136,17 +144,15 @@ class Game { // Game class
         if (t == 2) {
             x2--;
             for (let i = y1; i < y2; i++) {
-                if (!this.map[i]) continue;
-                if (!ns.includes(this.map[i][x2])) {
+                if (!ns.includes(this.map.getBlock(x2, i))) {
                     return [x2, i];
                 }
             }
             return false;
         }
         if (t == 3) {
-            if (!this.map[y1]) return false;
             for (let i = x1; i < x2; i++) {
-                if (!ns.includes(this.map[y1][i])) {
+                if (!ns.includes(this.map.getBlock(i, y1))) {
                     return [i, y1];
                 }
             }

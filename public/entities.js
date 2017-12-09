@@ -9,7 +9,7 @@ class Entity {
         this.vx = 0;
         this.vy = 0;
         this.game = g;
-        this.gravity = 0.45;
+        this.gravity = 150;
         this.respawn = false;
     }
     draw(X, cx, cy) {
@@ -38,8 +38,8 @@ class Player extends Entity {
         this.respawn = true;
     }
     tick(tt) {
-        this.physics(tt);
         this.kbControl(tt);
+        this.physics(tt);
         if(this.respawn && this.y > this.game.map.height + 10){
             let sb = this.game.map.startBlock;
             this.x = sb[0];
@@ -53,6 +53,12 @@ class Player extends Entity {
         this.vy *= 0.995 ** (tt * 1e3);
 
         var a;
+        if ((a = this.game.block(3, this))) {
+            if (this.vy < 0) {
+                this.vy = 0;
+                this.y = a[1] + this.height;
+            }
+        }
         if ((a = this.game.block(1, this))) {
             if (this.vx < 0) {
                 this.vx = 0;
@@ -65,12 +71,6 @@ class Player extends Entity {
                 this.x = a[0] - this.width;
             }
         }
-        if ((a = this.game.block(3, this))) {
-            if (this.vy < 0) {
-                this.vy = 0;
-                this.y = a[1] + this.height;
-            }
-        }
         if ((a = this.game.block(0, this))) {
             if (this.vy > 0) {
                 this.vy = 0;
@@ -79,7 +79,7 @@ class Player extends Entity {
             this.grounded = true;
         } else {
             this.grounded = false;
-            this.vy += this.gravity;
+            this.vy += this.gravity * tt;
         }
     }
     kbControl(tt) {
@@ -90,12 +90,12 @@ class Player extends Entity {
         )
             return;
         var k = this.game.screen.C.key,
-            s = 0.1,
-            b = s * 60;
+            s = 0.35,
+            b = s * 10;
         if (k[87] || k[38] || k[32]) {
             // up
             if (this.grounded) {
-                this.vy -= this.gravity * 75;
+                this.vy -= this.gravity * s;
                 // this.vy -= s;
                 this.lastK.u = true;
             }
