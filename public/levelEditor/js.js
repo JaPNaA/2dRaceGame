@@ -1,7 +1,11 @@
+// TODO: add "test map" feature
+
 const CVS = document.getElementById("cvs"),
     X = CVS.getContext("2d"),
     C = {
-        key: []
+        key: [],
+        mousedown: false,
+        blockp: [1, 0]
     };
 window.scale = 28;
 getTr(1);
@@ -30,6 +34,82 @@ class Main {
             load: []
         };
         this.then = Date.now();
+        this.ui = document.createElement("div");
+        {
+            let x = this.ui;
+            x.classList.add("ui");
+            {
+                let a = document.createElement("div");
+                a.classList.add("drag");
+                x.drag = false;
+                x.top = 8;
+                x.left = 8;
+                x.addEventListener("mousedown", () => (x.drag = true));
+                addEventListener("mouseup", () => {
+                    x.drag = false;
+                    console.log("up");
+                });
+                addEventListener("mousemove", e => {
+                    if (x.drag) {
+                        x.top += e.movementY;
+                        x.left += e.movementX;
+                    }
+                    x.style.top = x.top + "px";
+                    x.style.left = x.left + "px";
+                });
+                x.appendChild(a);
+            }
+            {
+                let a = document.createElement("div");
+                a.classList.add("current");
+                {
+                    let b = document.createElement("div");
+                    b.classList.add("sel");
+                    b.update = function() {
+                        var f = BLOCKINDEX[C.blockp[0]].fill;
+                        if (typeof f == "string") {
+                            this.style.backgroundColor = f;
+                            this.style.backgroundImage = "none";
+                        } else {
+                            this.style.backgroundColor = "rgba(0,0,0,0)";
+                            this.style.backgroundImage = "url(" + f.src + ")";
+                        }
+                    };
+                    b.update();
+                    b.addEventListener("click", function() { // switch to a better system
+                        var a = prompt("switch to block... (int)") * 1;
+                        if (!a && a !== 0) return;
+                        C.blockp[0] = a;
+                        this.update();
+                    });
+                    a.appendChild(b);
+                }
+                {
+                    let b = document.createElement("div");
+                    b.classList.add("sel");
+                    b.update = function() {
+                        var f = BLOCKINDEX[C.blockp[1]].fill;
+                        if (typeof f == "string") {
+                            this.style.backgroundColor = f;
+                            this.style.backgroundImage = "none";
+                        } else {
+                            this.style.backgroundColor = "rgba(0,0,0,0)";
+                            this.style.backgroundImage = "url(" + f.src + ")";
+                        }
+                    };
+                    b.update();
+                    b.addEventListener("click", function() { // switch to a better system
+                        var a = prompt("switch to block... (int)") * 1;
+                        if (!a && a !== 0) return;
+                        C.blockp[1] = a;
+                        this.update();
+                    });
+                    a.appendChild(b);
+                }
+                x.appendChild(a);
+            }
+            document.body.appendChild(x);
+        }
         this.reqanf();
         this.tickl();
     }
@@ -118,6 +198,13 @@ class Main {
             this.cameraVX *= 0.995 ** (tt * 1e3);
             this.cameraVY *= 0.995 ** (tt * 1e3);
         }
+        if (C.mousedown !== false) {
+            this.click(
+                C.mouseX - innerWidth / 2,
+                C.mouseY - innerHeight / 2,
+                C.mousedown
+            );
+        }
         for (let i of this.entities) {
             i.tick(tt);
         }
@@ -151,11 +238,28 @@ class Main {
             that.then = n;
         }, 1);
     }
-    click(x, y) {
+    click(x, y, t) {
+        if (t === undefined) return;
         var nx = x / scale + this.cameraX,
             ny = y / scale + this.cameraY;
-        this.map.setBlock(Math.floor(nx), Math.floor(ny), 1);
+        if (t == 0) {
+            this.map.setBlock(Math.floor(nx), Math.floor(ny), C.blockp[0]);
+        } else if (t == 2) {
+            this.map.setBlock(Math.floor(nx), Math.floor(ny), C.blockp[1]);
+        }
     }
+}
+
+function mapToCSV(e) {
+    var f = [];
+    for (let y = 0; y < e.height; y++) {
+        let g = [];
+        for (let x = 0; x < e.width; x++) {
+            g.push(e.getBlock(x, y));
+        }
+        f.push(g.join(","));
+    }
+    return f.join("\n");
 }
 
 addEventListener("keydown", e => (C.key[e.keyCode] = true));
@@ -176,8 +280,18 @@ addEventListener("wheel", function(e) {
     }
     getTr(1);
 });
-addEventListener("click", function(e) {
+CVS.addEventListener("mousedown", e => (C.mousedown = e.button));
+CVS.addEventListener("mouseup", e => {
+    C.mousedown = false;
     main.click(e.clientX - innerWidth / 2, e.clientY - innerHeight / 2);
+
+    C.mouseX = e.clientX;
+    C.mouseY = e.clientY;
 });
+CVS.addEventListener("mousemove", e => {
+    C.mouseX = e.clientX;
+    C.mouseY = e.clientY;
+});
+addEventListener("contextmenu", e => e.preventDefault());
 
 var main = new Main(prompt("Load level... (int)"));

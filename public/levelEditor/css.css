@@ -12,3 +12,34 @@ canvas {
     cursor: default;
     background-color: transparent;
 }
+.ui {
+    position: fixed;
+    z-index: 1;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 4px;
+    color: #fff;
+    padding-top: 18px;
+}
+.ui > div {
+}
+.ui div.drag {
+    border-radius: 4px 4px 0px 0px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    width: 100%;
+    height: 16px;
+    background-color: rgba(255, 255, 255, 0.7);
+}
+.ui .current .sel {
+    width: 48px;
+    height: 48px;
+    background-size: contain;
+    border: 1px solid red;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}

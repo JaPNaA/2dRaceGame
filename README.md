@@ -9,6 +9,7 @@ Project suggested by <a href="https://github.com/roxasbtg"> @RoxasBTG </a>
         Create map editor <b>@RoxasBTG</b>
         <ul>
             <li> Add background/middleground/foreground compatibility </li>
+            <li> Add 'test map' feature </li>
         </ul>
     </li>
     <li>

@@ -58,6 +58,7 @@ async function getMap(e) {
     var a = await new Promise(function(res) {
             var a = new XMLHttpRequest();
             a.open("GET", "map/" + e + ".csv");
+            a.responseType = "text";
             a.addEventListener("load", function() {
                 res(a.response);
             });
