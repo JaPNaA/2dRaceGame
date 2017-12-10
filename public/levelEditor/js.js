@@ -5,7 +5,8 @@ const CVS = document.getElementById("cvs"),
     C = {
         key: [],
         mousedown: false,
-        blockp: [1, 0]
+        blockp: [1, 0],
+        prompta: 0
     };
 window.scale = 28;
 getTr(1);
@@ -41,13 +42,13 @@ class Main {
             {
                 let a = document.createElement("div");
                 a.classList.add("drag");
+                a.innerHTML = "Menu";
                 x.drag = false;
                 x.top = 8;
                 x.left = 8;
-                x.addEventListener("mousedown", () => (x.drag = true));
+                a.addEventListener("mousedown", () => (x.drag = true));
                 addEventListener("mouseup", () => {
                     x.drag = false;
-                    console.log("up");
                 });
                 addEventListener("mousemove", e => {
                     if (x.drag) {
@@ -57,11 +58,20 @@ class Main {
                     x.style.top = x.top + "px";
                     x.style.left = x.left + "px";
                 });
+                addEventListener("resize", () => {
+                    if (x.top > innerHeight - x.clientWidth) {
+                        x.top = innerHeight - 32;
+                    }
+                    if (x.left > innerWidth - x.clientHeight) {
+                        x.left = innerWidth - 32;
+                    }
+                });
                 x.appendChild(a);
             }
             {
                 let a = document.createElement("div");
                 a.classList.add("current");
+                x.sel = [];
                 {
                     let b = document.createElement("div");
                     b.classList.add("sel");
@@ -76,13 +86,8 @@ class Main {
                         }
                     };
                     b.update();
-                    b.addEventListener("click", function() { // switch to a better system
-                        var a = prompt("switch to block... (int)") * 1;
-                        if (!a && a !== 0) return;
-                        C.blockp[0] = a;
-                        this.update();
-                    });
                     a.appendChild(b);
+                    x.sel.push(b);
                 }
                 {
                     let b = document.createElement("div");
@@ -98,14 +103,59 @@ class Main {
                         }
                     };
                     b.update();
-                    b.addEventListener("click", function() { // switch to a better system
-                        var a = prompt("switch to block... (int)") * 1;
-                        if (!a && a !== 0) return;
-                        C.blockp[1] = a;
-                        this.update();
+                    a.appendChild(b);
+                    x.sel.push(b);
+                }
+                x.appendChild(a);
+            }
+            {
+                let a = document.createElement("div");
+                a.classList.add("blockSel");
+                for (let i in BLOCKINDEX) {
+                    if (!(i * 1) && i != 0) continue;
+                    let b = document.createElement("div"),
+                        f = BLOCKINDEX[i].fill;
+                    b.classList.add("item");
+                    b.block = i;
+                    if (typeof f == "string") {
+                        b.style.backgroundColor = f;
+                        b.style.backgroundImage = "none";
+                    } else {
+                        b.style.backgroundColor = "rgba(0,0,0,0)";
+                        b.style.backgroundImage = "url(" + f.src + ")";
+                    }
+                    b.addEventListener("mouseup", function(e) {
+                        if (e.button === 0) {
+                            C.blockp[0] = this.block;
+                            x.sel[0].update();
+                        } else if (e.button === 2) {
+                            C.blockp[1] = this.block;
+                            x.sel[1].update();
+                        }
                     });
                     a.appendChild(b);
                 }
+                x.appendChild(a);
+            }
+            {
+                let a = document.createElement("div");
+                a.style.marginTop = "12px";
+                a.classList.add("button");
+                a.innerHTML = "Export";
+                a.addEventListener("click", function(e) {
+                    prompta(
+                        "Copy/Paste<br><textarea id=txta></textarea> <br> <div id=tstmp class='button'> Test map </div>"
+                    );
+                    var t = document.getElementById("txta"),
+                        m = document.getElementById("tstmp");
+                    t.innerHTML = mapToCSV(main.map);
+                    t.addEventListener("click", function() {
+                        this.select();
+                    });
+                    m.addEventListener("click", function() {
+                        alert("This is work in progress");
+                    });
+                });
                 x.appendChild(a);
             }
             document.body.appendChild(x);
@@ -239,7 +289,7 @@ class Main {
         }, 1);
     }
     click(x, y, t) {
-        if (t === undefined) return;
+        if (t === undefined || C.prompta) return;
         var nx = x / scale + this.cameraX,
             ny = y / scale + this.cameraY;
         if (t == 0) {
@@ -262,15 +312,41 @@ function mapToCSV(e) {
     return f.join("\n");
 }
 
-addEventListener("keydown", e => (C.key[e.keyCode] = true));
+function prompta(e) {
+    var a = document.createElement("div");
+    C.prompta++;
+    a.classList.add("prompta");
+    a.innerHTML = e;
+    document.body.appendChild(a);
+
+    a.style.left = (innerWidth - a.clientWidth) / 2 + "px";
+    a.style.top = (innerHeight - a.clientHeight) / 2 + "px";
+
+    a.close = function() {
+        this.parentElement.removeChild(this);
+        C.prompta--;
+    };
+}
+
+addEventListener("keydown", e => {
+    C.key[e.keyCode] = true;
+    if (C.prompta && e.keyCode == 27) {
+        let a;
+        while ((a = document.getElementsByClassName("prompta")).length) {
+            a[0].close();
+        }
+    }
+});
 addEventListener("keyup", e => (C.key[e.keyCode] = false));
 function resize() {
     CVS.width = innerWidth;
     CVS.height = innerHeight;
+    getTr(1);
 }
 resize();
 addEventListener("resize", resize);
 addEventListener("wheel", function(e) {
+    if (C.prompta) return;
     if (e.deltaY > 0) {
         if (!(scale < 4)) {
             scale -= 2;

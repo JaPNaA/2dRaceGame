@@ -18,9 +18,9 @@ canvas {
     background-color: rgba(0, 0, 0, 0.8);
     border-radius: 4px;
     color: #fff;
-    padding-top: 18px;
-}
-.ui > div {
+    padding-top: 32px;
+    overflow: hidden;
+    box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.4);
 }
 .ui div.drag {
     border-radius: 4px 4px 0px 0px;
@@ -33,13 +33,52 @@ canvas {
     width: 100%;
     height: 16px;
     background-color: rgba(255, 255, 255, 0.7);
+    cursor: move;
+    user-select: none;
+    padding: 6px;
+    color: #000;
+    font-weight: bold;
+    font-family: Arial;
 }
 .ui .current .sel {
     width: 48px;
     height: 48px;
+    border: 1px solid #F00;
+}
+.ui .blockSel .item {
+    width: 18px;
+    height: 18px;
+    border: 1px solid #FFF;
+    cursor: pointer;
+}
+.ui .current .sel, .ui .blockSel .item {
     background-size: contain;
-    border: 1px solid red;
     display: inline-block;
     margin: 0;
     padding: 0;
+}
+textarea {
+    width: 100%;
+    height: 45vh;
+}
+.button {
+    border-radius: 2px;
+    min-width: 24px;
+    min-height: 16px;
+    color: #FFF;
+    background-color: #000;
+    font-weight: bold;
+    font-family: Arial;
+    text-align: center;
+    padding: 8px;
+    cursor: pointer;
+    font-size:
+}
+.prompta {
+    position: fixed;
+    border-radius: 4px;
+    background-color: black;
+    min-width: 40%;
+    color: white;
+    padding: 8px;
 }
