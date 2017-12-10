@@ -6,21 +6,35 @@ function loadImage(e) {
 const IMG = {
         floorBlock: loadImage("floorBlock.png"),
         startBlock: loadImage("startBlock.png"),
-        finishBlock: loadImage("finishBlock.png")
+        finishBlock: loadImage("finishBlock.png"),
+        glassBlock: loadImage("glassBlock.png")
     },
     BLOCKINDEX = {
         NONSOLID: [undefined, 0],
         0: {
-            fill: "rgba(0,0,0,0)"
+            name: "Air",
+            fill: "rgba(0,0,0,0)",
+            caption: "I can't see it."
         },
         1: {
-            fill: IMG.floorBlock
+            name: "Cobblestone",
+            fill: IMG.floorBlock,
+            caption: "Life"
         },
         2: {
-            fill: IMG.startBlock
+            name: "Start Block",
+            fill: IMG.startBlock,
+            caption: "'Spawnpoint block'"
         },
         3: {
-            fill: IMG.finishBlock
+            name: "Finish Block",
+            fill: IMG.finishBlock,
+            caption: "When players touch this, they win"
+        },
+        4: {
+            name: "Glass",
+            fill: IMG.glassBlock,
+            caption: "It's transparent"
         }
     };
 

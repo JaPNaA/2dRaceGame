@@ -6,7 +6,8 @@ const CVS = document.getElementById("cvs"),
         key: [],
         mousedown: false,
         blockp: [1, 0],
-        prompta: 0
+        prompta: 0,
+        blur: false
     };
 window.scale = 28;
 getTr(1);
@@ -289,7 +290,7 @@ class Main {
         }, 1);
     }
     click(x, y, t) {
-        if (t === undefined || C.prompta) return;
+        if (t === undefined || C.prompta || C.blur) return;
         var nx = x / scale + this.cameraX,
             ny = y / scale + this.cameraY;
         if (t == 0) {
@@ -359,6 +360,7 @@ addEventListener("wheel", function(e) {
 CVS.addEventListener("mousedown", e => (C.mousedown = e.button));
 CVS.addEventListener("mouseup", e => {
     C.mousedown = false;
+    C.blur = false;
     main.click(e.clientX - innerWidth / 2, e.clientY - innerHeight / 2);
 
     C.mouseX = e.clientX;
@@ -369,5 +371,5 @@ CVS.addEventListener("mousemove", e => {
     C.mouseY = e.clientY;
 });
 addEventListener("contextmenu", e => e.preventDefault());
-
+addEventListener("blur", () => (C.blur = true));
 var main = new Main(prompt("Load level... (int)"));

@@ -93,7 +93,7 @@ class Player extends Entity {
             return;
         var k = this.game.screen.C.key,
             s = 0.35,
-            b = s * 10;
+            b = s * 15;
         if (k[87] || k[38] || k[32]) {
             // up
             if (this.grounded) {
