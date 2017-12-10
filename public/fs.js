@@ -7,7 +7,8 @@ const IMG = {
         floorBlock: loadImage("floorBlock.png"),
         startBlock: loadImage("startBlock.png"),
         finishBlock: loadImage("finishBlock.png"),
-        glassBlock: loadImage("glassBlock.png")
+        glassBlock: loadImage("glassBlock.png"),
+        player: loadImage("player.png")
     },
     BLOCKINDEX = {
         NONSOLID: [undefined, 0],
@@ -87,18 +88,23 @@ async function getMap(e) {
         let r = i.split(","),
             f = [];
         for (let x = 0; x < r.length; x++) {
-            let j = r[x];
-            //* parse j
-            if (j == "2") {
+            let j = r[x],
+                a = j.split("."),
+                al = a.length;
+            for (let i = 0; i < al; i++) {
+                a[i] = a[i] / 1;
+            }
+            if (a.includes(2)) {
                 d.startBlock = [x, y];
             }
-            f.push(j * 1);
+            f.push(a);
         }
         c.push(f);
     }
 
     d.width = c[0].length;
     d.height = c.length;
+    d.layers = typeof c[0][0] == "string" ? 1 : c[0][0].length;
 
     for (let cy = 0; cy < c.length / 16; cy++) {
         let cya = [];
@@ -118,7 +124,7 @@ async function getMap(e) {
         d.push(cya);
     }
 
-    d.getBlock = function(x, y) {
+    d.getBlock = function(x, y, i) {
         var a = this[Math.floor(y / 16)];
         if (!a) return;
         a = a[Math.floor(x / 16)];
@@ -126,21 +132,29 @@ async function getMap(e) {
         a = a[y % 16];
         if (!a) return;
         a = a[x % 16];
-        return a;
-    };
-    d.setBlock = function(x, y, d) {
-        var a = this[Math.floor(y / 16)];
-        if (!a) return false;
-        a = a[Math.floor(x / 16)];
-        if (!a) return false;
-        a = a[y % 16];
-        if (!a) return false;
-        if (a[x % 16] === undefined) {
-            return false;
+        if (!a) return;
+        if(a.length == 1){
+            return a[0];
         } else {
-            a[x % 16] = d;
-            return true;
+            if(i === undefined){
+                return a;
+            } else {
+                return a[i]
+            }
         }
+    };
+    d.setBlock = function(x, y, i, d) {
+        var a = this[Math.floor(y / 16)];
+        if (!a) return;
+        a = a[Math.floor(x / 16)];
+        if (!a) return;
+        a = a[y % 16];
+        if (!a) return;
+        a = a[x % 16];
+        if (!a) return;
+        if(a[i] === undefined) return false;
+        a[i] = d;
+        return true;
     };
     return d;
 }

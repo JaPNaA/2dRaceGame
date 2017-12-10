@@ -14,7 +14,11 @@ class Entity {
     }
     draw(X, cx, cy) {
         //* add animation
-        X.uRect(this.x - cx, this.y - cy, this.width, this.height, "#F00");
+        if(typeof this.fill == 'string'){
+            X.uRect(this.x - cx, this.y - cy, this.width, this.height, this.fill);
+        } else {
+            X.uImg(this.fill, 0, 0, 0, 0, this.x - cx, this.y - cy, this.width, this.height, this.vx < 0);
+        }
     }
     tick() {}
 }
@@ -36,6 +40,7 @@ class Player extends Entity {
         this.x = sb[0];
         this.y = sb[1] - this.height;
         this.respawn = true;
+        this.fill = IMG.player;
     }
     tick(tt) {
         this.kbControl(tt);

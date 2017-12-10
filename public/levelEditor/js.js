@@ -7,7 +7,8 @@ const CVS = document.getElementById("cvs"),
         mousedown: false,
         blockp: [1, 0],
         prompta: 0,
-        blur: false
+        blur: false,
+        layer: 0
     };
 window.scale = 28;
 getTr(1);
@@ -26,9 +27,9 @@ class Main {
             that.map = e;
             that.start();
         });
-        this.cameraX = 0;
+        this.cameraX = innerWidth / scale / 2 - 5;
         this.cameraVX = 0;
-        this.cameraY = 0;
+        this.cameraY = innerHeight / scale / 2 - 5;
         this.cameraVY = 0;
         this.cameraFocus = null;
         this.freeCam = true;
@@ -140,6 +141,23 @@ class Main {
             }
             {
                 let a = document.createElement("div");
+                a.classList.add("layers");
+                x.layers = [];
+                for (let i = 0; i < 3; i++) {
+                    let b = document.createElement("div");
+                    b.classList.add("layer");
+                    b.layer = b.innerHTML = i;
+                    x.layers.push(b);
+                    b.addEventListener("click", function() {
+                        setLayer(this.layer);
+                    });
+                    a.appendChild(b);
+                }
+                x.layers[C.layer].classList.add("sel");
+                x.appendChild(a);
+            }
+            {
+                let a = document.createElement("div");
                 a.style.marginTop = "12px";
                 a.classList.add("button");
                 a.innerHTML = "Export";
@@ -185,13 +203,22 @@ class Main {
                 x < this.cameraX + innerWidth / scale / 2;
                 x++
             ) {
-                let a = this.map.getBlock(x, y);
-                this.drawBlock(x, y, a);
+                for (let i = this.map.layers - 1; i >= 0; i--) {
+                    let a = this.map.getBlock(x, y, i);
+                    if(a == 0 && i != 0) continue;
+                    this.drawBlock(x, y, a, i == 0, i);
+                }
             }
         }
     }
-    drawBlock(x, y, d) {
+    drawBlock(x, y, d, o, z) {
         if (!BLOCKINDEX[d]) return;
+        var lum = 0;
+        if(z == 2){
+            lum = -0.3;
+        } else if (z == 1){
+            lum = 0.1;
+        }
         X.uBlock(
             x - this.cameraX,
             y - this.cameraY,
@@ -201,7 +228,8 @@ class Main {
             null,
             null,
             {
-                outline: true
+                outline: o,
+                lum: lum
             }
         );
     }
@@ -294,9 +322,19 @@ class Main {
         var nx = x / scale + this.cameraX,
             ny = y / scale + this.cameraY;
         if (t == 0) {
-            this.map.setBlock(Math.floor(nx), Math.floor(ny), C.blockp[0]);
+            this.map.setBlock(
+                Math.floor(nx),
+                Math.floor(ny),
+                C.layer,
+                C.blockp[0]
+            );
         } else if (t == 2) {
-            this.map.setBlock(Math.floor(nx), Math.floor(ny), C.blockp[1]);
+            this.map.setBlock(
+                Math.floor(nx),
+                Math.floor(ny),
+                C.layer,
+                C.blockp[1]
+            );
         }
     }
 }
@@ -306,7 +344,11 @@ function mapToCSV(e) {
     for (let y = 0; y < e.height; y++) {
         let g = [];
         for (let x = 0; x < e.width; x++) {
-            g.push(e.getBlock(x, y));
+            let h = [];
+            for(let z = 0; z < e.layers; z++){
+                h.push(e.getBlock(x, y, z));
+            }
+            g.push(h.join("."));
         }
         f.push(g.join(","));
     }
@@ -327,6 +369,20 @@ function prompta(e) {
         this.parentElement.removeChild(this);
         C.prompta--;
     };
+    return a;
+}
+function setLayer(e) {
+    if(!main) return;
+    if (e >= 0 && e < main.map.layers) {
+        C.layer = e;
+        for (let i of main.ui.layers) {
+            if (i.layer == C.layer) {
+                i.classList.add("sel");
+            } else {
+                i.classList.remove("sel");
+            }
+        }
+    }
 }
 
 addEventListener("keydown", e => {
@@ -336,6 +392,9 @@ addEventListener("keydown", e => {
         while ((a = document.getElementsByClassName("prompta")).length) {
             a[0].close();
         }
+    }
+    if (e.keyCode >= 49 && e.keyCode <= 51) {
+        setLayer(e.keyCode - 49);
     }
 });
 addEventListener("keyup", e => (C.key[e.keyCode] = false));
@@ -372,4 +431,18 @@ CVS.addEventListener("mousemove", e => {
 });
 addEventListener("contextmenu", e => e.preventDefault());
 addEventListener("blur", () => (C.blur = true));
-var main = new Main(prompt("Load level... (int)"));
+
+var main;
+new Promise(function(res) {
+    var a = prompta(
+        "Enter level... (int) <br> <input type=text id=in style='width: 100%;'></input>"
+    ),
+        i = document.getElementById("in");
+    i.focus();
+    i.addEventListener("change", function() {
+        a.close();
+        res(this.value);
+    });
+}).then(e => {
+    main = new Main(e);
+});

@@ -1,3 +1,6 @@
+html {
+    user-select: none;
+}
 canvas {
     position: fixed;
     will-change: cursor;
@@ -56,6 +59,27 @@ canvas {
     display: inline-block;
     margin: 0;
     padding: 0;
+}
+.ui .layers {
+    display: grid;
+    width: 100%;
+    border-radius: 2px;
+    outline: 1px solid white;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 0;
+    padding: 0;
+}
+.ui .layers .layer {
+    text-align: center;
+    outline: 1px solid white;
+    background-color: transparent;
+    will-change: color, background-color;
+    transition: 0.15s;
+    cursor: pointer;
+}
+.ui .layers .layer.sel {
+    background-color: #FFF;
+    color: #000;
 }
 textarea {
     width: 100%;
