@@ -46,9 +46,6 @@ class Game {
         }
         this.freeCam = this.screen.C.key[9];
         this.background(X);
-        for (let i of this.entities) {
-            i.draw(X, this.cameraX, this.cameraY);
-        }
         // for (let y = 0; y < this.map.height; y++) {
         //     let a = this.map[y],
         //         al = this.map.width;
@@ -57,13 +54,29 @@ class Game {
         //         this.drawBlock(X, x, y, a[x]);
         //     }
         // }
-        for (let y = Math.floor(this.cameraY) - 15; y < this.cameraY + 15; y++) {
-            let al = this.map.width;
-            for (let x = Math.floor(this.cameraX) - 15; x < this.cameraX + 15; x++) {
-                let a = this.map.getBlock(x, y);
-                if (!a) continue;
-                this.drawBlock(X, x, y, a);
+        for (let i = this.map.layers - 1; i >= 0; i--) {
+            for (
+                let y = Math.floor(this.cameraY) - 15;
+                y < this.cameraY + 15;
+                y++
+            ) {
+                let al = this.map.width;
+                for (
+                    let x = Math.floor(this.cameraX) - 15;
+                    x < this.cameraX + 15;
+                    x++
+                ) {
+                    // let a = this.map.getBlock(x, y);
+                    // if (!a) continue;
+                    // this.drawBlock(X, x, y, a);
+                    let a = this.map.getBlock(x, y, i);
+                    if (a == 0) continue;
+                    this.drawBlock(X, x, y, a, i);
+                }
             }
+        }
+        for (let i of this.entities) {
+            i.draw(X, this.cameraX, this.cameraY);
         }
     }
     tick(tt) {
@@ -104,8 +117,27 @@ class Game {
             i.tick(tt);
         }
     }
-    drawBlock(X, x, y, d) {
-        X.uBlock(x - this.cameraX, y - this.cameraY, BLOCKINDEX[d].fill);
+    drawBlock(X, x, y, d, z) {
+        // X.uBlock(x - this.cameraX, y - this.cameraY, BLOCKINDEX[d].fill);
+        if (!BLOCKINDEX[d]) return;
+        var lum = 0;
+        if (z == 2) {
+            lum = -0.3;
+        } else if (z == 1) {
+            lum = 0.1;
+        }
+        X.uBlock(
+            x - this.cameraX,
+            y - this.cameraY,
+            BLOCKINDEX[d].fill,
+            null,
+            null,
+            null,
+            null,
+            {
+                lum: lum
+            }
+        );
     }
     background(X) {
         X.sFill("#5ab3ff");
@@ -127,7 +159,7 @@ class Game {
 
         if (t == 0) {
             for (let i = x1; i < x2; i++) {
-                if (!ns.includes(this.map.getBlock(i, y2))) {
+                if (!ns.includes(this.map.getBlock(i, y2, 0))) {
                     return [i, y2];
                 }
             }
@@ -135,7 +167,7 @@ class Game {
         }
         if (t == 1) {
             for (let i = y1; i < y2; i++) {
-                if (!ns.includes(this.map.getBlock(x1, i))) {
+                if (!ns.includes(this.map.getBlock(x1, i, 0))) {
                     return [x1, i];
                 }
             }
@@ -144,7 +176,7 @@ class Game {
         if (t == 2) {
             x2--;
             for (let i = y1; i < y2; i++) {
-                if (!ns.includes(this.map.getBlock(x2, i))) {
+                if (!ns.includes(this.map.getBlock(x2, i, 0))) {
                     return [x2, i];
                 }
             }
@@ -152,7 +184,7 @@ class Game {
         }
         if (t == 3) {
             for (let i = x1; i < x2; i++) {
-                if (!ns.includes(this.map.getBlock(i, y1))) {
+                if (!ns.includes(this.map.getBlock(i, y1, 0))) {
                     return [i, y1];
                 }
             }

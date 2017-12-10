@@ -107,6 +107,7 @@ CanvasRenderingContext2D.prototype.uBlock = function(
         this.fillStyle = c;
         this.fillRect(x, y, 1, 1);
     } else {
+        if (o && o.lum && o.lum > 0) this.globalAlpha = 1 - o.lum;
         this.drawImage(
             c,
             sx || 0,
@@ -127,6 +128,10 @@ CanvasRenderingContext2D.prototype.uBlock = function(
         this.stroke();
         this.closePath();
     }
+    if (o && o.lum && o.lum < 0) {
+        this.fillStyle = "rgba(0, 0, 0, " + Math.abs(o.lum) + ")";
+        this.fillRect(x, y, 1, 1);
+    }
 
     this.restore();
 };
@@ -136,6 +141,38 @@ CanvasRenderingContext2D.prototype.uRect = function(x, y, w, h, c) {
 
     this.fillStyle = c;
     this.fillRect(x, y, w, h);
+
+    this.restore();
+};
+CanvasRenderingContext2D.prototype.uImg = function(
+    c,
+    sx,
+    sy,
+    sw,
+    sh,
+    x,
+    y,
+    w,
+    h,
+    f
+) {
+    this.sSetup();
+
+    if (f) {
+        this.translate(w, 0);
+        this.scale(-1, 1);
+    }
+    this.drawImage(
+        c,
+        sx || 0,
+        sy || 0,
+        sw || c.width,
+        sh || c.height,
+        x,
+        y,
+        w,
+        h
+    );
 
     this.restore();
 };
