@@ -44,6 +44,8 @@ class Player extends Entity {
             let sb = this.game.map.startBlock;
             this.x = sb[0];
             this.y = sb[1] - this.height;
+            this.vx = 0;
+            this.vy = 0;
         }
     }
     physics(tt) {
