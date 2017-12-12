@@ -1,8 +1,8 @@
 class Entity {
     constructor(g) {
         this.control = 0; // 0: AI, 1: Manually, 2: WebSockt
-        this.width = 0.8;
-        this.height = 1;
+        this.width = 2;
+        this.height = 3;
         this.x = 0;
         this.y = 0;
         this.frame = 0;
@@ -17,7 +17,7 @@ class Entity {
         if(typeof this.fill == 'string'){
             X.uRect(this.x - cx, this.y - cy, this.width, this.height, this.fill);
         } else {
-            X.uImg(this.fill, 0, 0, 0, 0, this.x - cx, this.y - cy, this.width, this.height, this.vx < 0);
+            X.uImg(this.fill, 0, 0, 0, 0, this.x - cx, this.y - cy, this.width, this.height, this.facing);
         }
     }
     tick() {}
@@ -102,7 +102,7 @@ class Player extends Entity {
         if (k[87] || k[38] || k[32]) {
             // up
             if (this.grounded) {
-                this.vy -= this.gravity * s;
+                this.vy -= this.gravity * s * this.height;
                 // this.vy -= s;
                 this.lastK.u = true;
             }
@@ -126,6 +126,7 @@ class Player extends Entity {
                 this.vx -= k[16] ? s : b;
                 this.lastK.l = true;
             }
+            this.facing = true;
         } else {
             this.lastK.l = false;
         }
@@ -138,6 +139,7 @@ class Player extends Entity {
                 this.vx += k[16] ? s : b;
                 this.lastK.r = true;
             }
+            this.facing = false;
         } else {
             this.lastK.r = false;
         }

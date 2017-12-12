@@ -1,5 +1,5 @@
 class Screen {
-    constructor(C) {
+    constructor(C, s) {
         var that = this;
         this.C = C;
         C.screen = this;
@@ -26,6 +26,8 @@ class Screen {
         this.sI = 0;
         this.tickLoop = false;
         this.then = Date.now();
+        this.scale = 30;
+        getTr(1, s || this.scale || this.C.scale);
     }
     draw() {
         for (let i of this.obs) {
@@ -90,15 +92,15 @@ class Screen {
         this.events[t].push(f);
         return this;
     }
-    addEventListener(e, f){
+    addEventListener(e, f) {
         var a = this.eventListeners[e];
-        if(!a) return;
+        if (!a) return;
         a.push(f);
     }
-    dispatchEvent(e){
+    dispatchEvent(e) {
         var a = this.eventListeners[e];
-        if(!a) return;
-        for(let i of a){
+        if (!a) return;
+        for (let i of a) {
             i(this);
         }
     }
@@ -125,7 +127,7 @@ class StartScreen extends Screen {
                 // X.uGrid();
             }
         });
-        this.on("click", function(){
+        this.on("click", function() {
             that.end();
             main.game();
         });
@@ -134,7 +136,8 @@ class StartScreen extends Screen {
 
 class GameScreen extends Screen {
     constructor(C) {
-        super(C);
+        super(C, 75);
+        this.scale = 75;
         var that = this;
 
         this.game = new Game(this, 0);

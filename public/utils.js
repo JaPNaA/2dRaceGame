@@ -1,9 +1,9 @@
 // util[ities].js
 
-function getTr(e) {
+function getTr(e, s) {
     // get offset and scale: param boolean e: reload data
     if (!e && getTr.p) return getTr.p;
-    var v = 30,
+    var v = s || 30,
         r = {
             sc: null,
             tx: innerWidth / 2,
@@ -176,3 +176,7 @@ CanvasRenderingContext2D.prototype.uImg = function(
 
     this.restore();
 };
+
+Array.prototype.last = function(){
+    return this[this.length - 1];
+}

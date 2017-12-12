@@ -39,122 +39,147 @@ const IMG = {
         }
     };
 
-async function getMap(e) {
-    var a = await new Promise(function(res) {
-            var a = new XMLHttpRequest();
-            a.open("GET", "map/" + e + ".csv");
-            a.addEventListener("load", function() {
-                res(a.response);
+class Map {
+    constructor(e) {
+        var that = this;
+        new Promise(function(res) {
+            var x = new XMLHttpRequest();
+            x.open("GET", "map/" + e + ".rgm");
+            x.responseType = "text";
+            x.addEventListener("load", function() {
+                res(x.response);
             });
-            a.send();
-        }),
-        b = a.split("\n"),
-        c = [];
-    for (let y = 0; y < b.length; y++) {
-        let i = b[y];
-        if (!i) continue;
-        let r = i.split(","),
-            f = [];
-        for (let x = 0; x < r.length; x++) {
-            let j = r[x];
-            //* parse j
-            if (j == "2") {
-                c.startBlock = [x, y];
-            }
-            f.push(j * 1);
-        }
-        c.push(f);
+            x.send();
+        }).then(function(e) {
+            that.load(e);
+        });
+        this.map = [];
+        this.callback = null;
     }
-    c.width = c[0].length;
-    c.height = c.length;
-    return c;
-}
-async function getMap(e) {
-    var a = await new Promise(function(res) {
-            var a = new XMLHttpRequest();
-            a.open("GET", "map/" + e + ".csv");
-            a.responseType = "text";
-            a.addEventListener("load", function() {
-                res(a.response);
-            });
-            a.send();
-        }),
-        b = a.split("\n"),
-        c = [],
-        d = [];
-    for (let y = 0; y < b.length; y++) {
-        let i = b[y];
-        if (!i) continue;
-        let r = i.split(","),
-            f = [];
-        for (let x = 0; x < r.length; x++) {
-            let j = r[x],
-                a = j.split("."),
-                al = a.length;
-            for (let i = 0; i < al; i++) {
-                a[i] = a[i] / 1;
-            }
-            if (a.includes(2)) {
-                d.startBlock = [x, y];
-            }
-            f.push(a);
-        }
-        c.push(f);
-    }
-
-    d.width = c[0].length;
-    d.height = c.length;
-    d.layers = typeof c[0][0] == "string" ? 1 : c[0][0].length;
-
-    for (let cy = 0; cy < c.length / 16; cy++) {
-        let cya = [];
-        for (let cx = 0; cx < c[cy].length / 16; cx++) {
-            let cxa = [],
-                tx = Math.min((cx + 1) * 16, c[cy].length),
-                ty = Math.min((cy + 1) * 16, c.length);
-            for (let y = cy * 16; y < ty; y++) {
-                let ya = [];
-                for (let x = cx * 16; x < tx; x++) {
-                    ya.push(c[y][x]);
+    load(e) {
+        var b = btoa(e.replace(/[\n\s]/g, ""))
+                .replace(/=/g, "")
+                .split("Z"),
+            c = [];
+        for (let y = 0; y < b.length; y++) {
+            let i = b[y];
+            if (!i) continue;
+            let r = i.split("/"),
+                f = [];
+            for (let x = 0; x < r.length; x++) {
+                let j = r[x],
+                    a = j.split("+"),
+                    al = a.length;
+                for (let z = 0; z < al; z++) {
+                    a[z] = a[z] / 1; // convert to number because bugs
                 }
-                cxa.push(ya);
+                if (a.includes(2)) {
+                    this.startBlock = [x, y];
+                }
+                f.push(a);
             }
-            cya.push(cxa);
+            c.push(f);
         }
-        d.push(cya);
-    }
 
-    d.getBlock = function(x, y, i) {
-        var a = this[Math.floor(y / 16)];
+        this.width = c[0].length;
+        this.height = c.length;
+        this.layers = typeof c[0][0] == "string" ? 1 : c[0][0].length;
+        this.map = c;
+        this.callback(this);
+    }
+    getBlock(x, y, z) {
+        var a = this.map[y];
         if (!a) return;
-        a = a[Math.floor(x / 16)];
+        a = a[x];
         if (!a) return;
-        a = a[y % 16];
-        if (!a) return;
-        a = a[x % 16];
-        if (!a) return;
-        if(a.length == 1){
-            return a[0];
+        if (z === undefined) {
+            return a;
         } else {
-            if(i === undefined){
-                return a;
-            } else {
-                return a[i]
-            }
+            return a[z];
         }
-    };
-    d.setBlock = function(x, y, i, d) {
-        var a = this[Math.floor(y / 16)];
+    }
+    setBlock(x, y, z, d) {
+        var a = this.map[y];
         if (!a) return;
-        a = a[Math.floor(x / 16)];
+        a = a[x];
         if (!a) return;
-        a = a[y % 16];
-        if (!a) return;
-        a = a[x % 16];
-        if (!a) return;
-        if(a[i] === undefined) return false;
-        a[i] = d;
+        if (a[z] === undefined) return false;
+        a[z] = d;
         return true;
-    };
-    return d;
+    }
+    export() {
+        var f = [];
+        for (let y = 0; y < this.height; y++) {
+            let g = [];
+            for (let x = 0; x < this.width; x++) {
+                let h = [];
+                for (let z = 0; z < this.layers; z++) {
+                    h.push(this.getBlock(x, y, z).toString(36));
+                }
+                g.push(h.join("+"));
+            }
+            f.push(g.join("/"));
+        }
+        return atob(f.join("Z"));
+    }
+    addLine(d, t) {
+        switch (d) {
+            case 0:
+                for (let q = 0; q < (t || 1); q++) {
+                    let a = [];
+                    for (let i = 0; i < this.width; i++) {
+                        let b = [];
+                        for (let i = 0; i < this.layers; i++) {
+                            b.push(0);
+                        }
+                        a.push(b);
+                    }
+                    this.map.push(a);
+                    this.height++;
+                }
+                break;
+            case 1:
+                for (let q = 0; q < (t || 1); q++) {
+                    for (let y of this.map) {
+                        let x = [];
+                        for (let i = 0; i < this.layers; i++) {
+                            x.push(0);
+                        }
+                        y.push(x);
+                    }
+                    this.width++;
+                }
+                break;
+            case 2:
+                for (let q = 0; q < (t || 1); q++) {
+                    for (let y of this.map) {
+                        let x = [];
+                        for (let i = 0; i < this.layers; i++) {
+                            x.push(0);
+                        }
+                        y.unshift(x);
+                    }
+                    this.width++;
+                }
+                break;
+            case 3:
+                for (let q = 0; q < (t || 1); q++) {
+                    let a = [];
+                    for (let i = 0; i < this.width; i++) {
+                        let b = [];
+                        for (let i = 0; i < this.layers; i++) {
+                            b.push(0);
+                        }
+                        a.push(b);
+                    }
+                    this.map.unshift(a);
+                    this.height++;
+                }
+                break;
+        }
+    }
+    then(e) {
+        this.callback = e;
+        return this;
+    }
 }

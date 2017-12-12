@@ -4,12 +4,10 @@ class Game {
         var that = this;
         this.screen = p;
         this.level = e;
-        this.map = [];
         this.entities = [];
         this.ready = false;
-        getMap(e).then(e => {
+        this.map = new Map(e).then(() => {
             // async function getMap
-            that.map = e;
             that.start();
         });
         this.cameraX = 0;
@@ -55,15 +53,16 @@ class Game {
         //     }
         // }
         for (let i = this.map.layers - 1; i >= 0; i--) {
+            let ss = Math.ceil(this.screen.scale / 2);
             for (
-                let y = Math.floor(this.cameraY) - 15;
-                y < this.cameraY + 15;
+                let y = Math.floor(this.cameraY) - ss;
+                y < this.cameraY + ss;
                 y++
             ) {
                 let al = this.map.width;
                 for (
-                    let x = Math.floor(this.cameraX) - 15;
-                    x < this.cameraX + 15;
+                    let x = Math.floor(this.cameraX) - ss;
+                    x < this.cameraX + ss;
                     x++
                 ) {
                     // let a = this.map.getBlock(x, y);
@@ -90,7 +89,7 @@ class Game {
             {
                 let k = this.screen.C.key,
                     s = 100 * tt;
-                if (k[87] || k[38]) {
+                if (k[87] || k[38] || k[32]) {
                     // up
                     this.cameraVY += -s;
                 }
@@ -98,7 +97,7 @@ class Game {
                     // left
                     this.cameraVX += -s;
                 }
-                if (k[83] || k[40]) {
+                if (k[83] || k[40] || k[16]) {
                     // down
                     this.cameraVY += s;
                 }

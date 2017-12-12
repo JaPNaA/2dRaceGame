@@ -13,6 +13,7 @@ class Canvas {
         this.hideMouse = false;
         this.hideMouseSI = 0;
         this.key = [];
+        this.scale = 30;
         this.X = this.canvas.getContext("2d");
         addEventListener("resize", () => that.resize());
         addEventListener("mousemove", () => that.mouseMove());
@@ -32,7 +33,7 @@ class Canvas {
         } else {
             this.canvas.width = innerWidth;
             this.canvas.height = innerHeight;
-            getTr(1);
+            getTr(1, (this.screen && this.screen.scale) || this.scale);
         }
         return this;
     }

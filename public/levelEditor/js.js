@@ -19,12 +19,11 @@ class Main {
     constructor(e) {
         var that = this;
         this.level = e;
-        this.map = [];
+        this.entities = [];
         this.entities = [];
         this.ready = false;
-        getMap(e).then(e => {
+        this.map = new Map(e).then(() => {
             // async function getMap
-            that.map = e;
             that.start();
         });
         this.cameraX = innerWidth / scale / 2 - 5;
@@ -167,7 +166,7 @@ class Main {
                     );
                     var t = document.getElementById("txta"),
                         m = document.getElementById("tstmp");
-                    t.innerHTML = mapToCSV(main.map);
+                    t.innerHTML = main.map.export();
                     t.addEventListener("click", function() {
                         this.select();
                     });
@@ -205,7 +204,7 @@ class Main {
             ) {
                 for (let i = this.map.layers - 1; i >= 0; i--) {
                     let a = this.map.getBlock(x, y, i);
-                    if(a == 0 && i != 0) continue;
+                    if (a == 0 && i != 0) continue;
                     this.drawBlock(x, y, a, i == 0, i);
                 }
             }
@@ -214,9 +213,9 @@ class Main {
     drawBlock(x, y, d, o, z) {
         if (!BLOCKINDEX[d]) return;
         var lum = 0;
-        if(z == 2){
+        if (z == 2) {
             lum = -0.3;
-        } else if (z == 1){
+        } else if (z == 1) {
             lum = 0.1;
         }
         X.uBlock(
@@ -245,7 +244,7 @@ class Main {
     }
     tick(tt) {
         if (!this.ready) return;
-        if (this.cameraFocus && !this.freeCam) {
+        m: if (this.cameraFocus && !this.freeCam) {
             let f = this.cameraFocus,
                 s = 20;
             this.cameraX += (f.x - this.cameraX) / s;
@@ -254,6 +253,7 @@ class Main {
             {
                 let k = C.key,
                     s = 100 * tt;
+                if (k[18]) break m;
                 if (k[87] || k[38]) {
                     // up
                     this.cameraVY += -s;
@@ -339,22 +339,6 @@ class Main {
     }
 }
 
-function mapToCSV(e) {
-    var f = [];
-    for (let y = 0; y < e.height; y++) {
-        let g = [];
-        for (let x = 0; x < e.width; x++) {
-            let h = [];
-            for(let z = 0; z < e.layers; z++){
-                h.push(e.getBlock(x, y, z));
-            }
-            g.push(h.join("."));
-        }
-        f.push(g.join(","));
-    }
-    return f.join("\n");
-}
-
 function prompta(e) {
     var a = document.createElement("div");
     C.prompta++;
@@ -372,7 +356,7 @@ function prompta(e) {
     return a;
 }
 function setLayer(e) {
-    if(!main) return;
+    if (!main) return;
     if (e >= 0 && e < main.map.layers) {
         C.layer = e;
         for (let i of main.ui.layers) {
@@ -386,15 +370,36 @@ function setLayer(e) {
 }
 
 addEventListener("keydown", e => {
-    C.key[e.keyCode] = true;
-    if (C.prompta && e.keyCode == 27) {
+    var k = e.keyCode;
+    C.key[k] = true;
+    if (k == 18) e.preventDefault();
+    if (e.altKey) {
+        e.preventDefault();
+        if ([87, 38, 32].includes(k)) {
+            // up
+            main.map.addLine(3);
+        }
+        if ([65, 37].includes(k)) {
+            // left
+            main.map.addLine(2);
+        }
+        if ([83, 40, 16].includes(k)) {
+            // down
+            main.map.addLine(0);
+        }
+        if ([68, 39].includes(k)) {
+            // right
+            main.map.addLine(1);
+        }
+    }
+    if (C.prompta && k == 27) {
         let a;
         while ((a = document.getElementsByClassName("prompta")).length) {
             a[0].close();
         }
     }
-    if (e.keyCode >= 49 && e.keyCode <= 51) {
-        setLayer(e.keyCode - 49);
+    if (k >= 49 && k <= 51) {
+        setLayer(k - 49);
     }
 });
 addEventListener("keyup", e => (C.key[e.keyCode] = false));
@@ -435,8 +440,8 @@ addEventListener("blur", () => (C.blur = true));
 var main;
 new Promise(function(res) {
     var a = prompta(
-        "Enter level... (int) <br> <input type=text id=in style='width: 100%;'></input>"
-    ),
+            "Enter level... (int) <br> <input type=text id=in style='width: 100%;'></input>"
+        ),
         i = document.getElementById("in");
     i.focus();
     i.addEventListener("change", function() {
