@@ -8,7 +8,13 @@ const CVS = document.getElementById("cvs"),
         blockp: [1, 0],
         prompta: 0,
         blur: false,
-        layer: 0
+        layer: 0,
+        testRunning: false,
+        testWindow: null,
+        preventExit: false,
+        fillMode: false,
+        startX: 0,
+        startY: 0
     };
 window.scale = 28;
 getTr(1);
@@ -161,17 +167,21 @@ class Main {
                 a.classList.add("button");
                 a.innerHTML = "Export";
                 a.addEventListener("click", function(e) {
+                    var exp = main.map.export();
                     prompta(
                         "Copy/Paste<br><textarea id=txta></textarea> <br> <div id=tstmp class='button'> Test map </div>"
                     );
                     var t = document.getElementById("txta"),
                         m = document.getElementById("tstmp");
-                    t.innerHTML = main.map.export();
+                    t.innerHTML = exp;
                     t.addEventListener("click", function() {
                         this.select();
                     });
+                    t.addEventListener("keydown", function(){
+                        C.preventExit = false;
+                    });
                     m.addEventListener("click", function() {
-                        alert("This is work in progress");
+                        testMap(exp);
                     });
                 });
                 x.appendChild(a);
@@ -182,6 +192,7 @@ class Main {
         this.tickl();
     }
     draw() {
+        if (C.testRunning) return;
         if (!this.ready) {
             X.sFill("#000");
             X.uText("Loading...", 0, 0, "#888", "2px Arial", 1);
@@ -336,6 +347,29 @@ class Main {
                 C.blockp[1]
             );
         }
+        if(C.fillMode){
+            //* Add fill:
+            /* @RoxasBTG
+                Variables you'll need:
+                    C.startX - Where the cursor started drag X
+                    C.startY -                               Y
+                    x - Current position  X
+                    y -                   Y
+
+                Thing's you'll need to know
+                    for(let i = [Start]; i < [End]; i++){
+                        // Your code, i is the current value you're on.
+                        // You can rename it to 'x' or 'y' to simplify it.
+                    }
+                    for(let y = 1; y < 3; y++){ // in code, Y always goes first
+                        for(let x = 0; x < 2; x++){ // This goes through every point from
+                                                    // (0, 1) to (2, 3)
+                            // Your code
+                        }
+                    }
+            */
+        }
+        C.preventExit = true;
     }
 }
 
@@ -355,6 +389,38 @@ function prompta(e) {
     };
     return a;
 }
+function testMap(e) {
+    try {
+        var win = open(
+            location.origin,
+            "_blank",
+            "width=" +
+                innerWidth +
+                ", height=" +
+                innerHeight +
+                ", top=" +
+                screenY +
+                ", left=" +
+                screenX
+        );
+    } catch (e) {
+        alert("an errors occurs");
+        return;
+    }
+    if (!win) {
+        alert("Enable popups and try again...");
+    }
+    C.testRunning = true;
+    C.testWindow = win;
+    win.addEventListener("devReady", () => {
+        win.DEVMODE.active = true;
+        win.DEVMODE.map = e;
+    });
+    win.addEventListener("beforeunload", () => {
+        C.testRunning = false;
+    });
+}
+
 function setLayer(e) {
     if (!main) return;
     if (e >= 0 && e < main.map.layers) {
@@ -375,21 +441,40 @@ addEventListener("keydown", e => {
     if (k == 18) e.preventDefault();
     if (e.altKey) {
         e.preventDefault();
-        if ([87, 38, 32].includes(k)) {
-            // up
-            main.map.addLine(3);
-        }
-        if ([65, 37].includes(k)) {
-            // left
-            main.map.addLine(2);
-        }
-        if ([83, 40, 16].includes(k)) {
-            // down
-            main.map.addLine(0);
-        }
-        if ([68, 39].includes(k)) {
-            // right
-            main.map.addLine(1);
+        if (e.shiftKey) {
+            if ([87, 38, 32].includes(k)) {
+                // up
+                main.map.removeLine(3);
+            }
+            if ([65, 37].includes(k)) {
+                // left
+                main.map.removeLine(2);
+            }
+            if ([83, 40].includes(k)) {
+                // down
+                main.map.removeLine(0);
+            }
+            if ([68, 39].includes(k)) {
+                // right
+                main.map.removeLine(1);
+            }
+        } else {
+            if ([87, 38, 32].includes(k)) {
+                // up
+                main.map.addLine(3);
+            }
+            if ([65, 37].includes(k)) {
+                // left
+                main.map.addLine(2);
+            }
+            if ([83, 40, 16].includes(k)) {
+                // down
+                main.map.addLine(0);
+            }
+            if ([68, 39].includes(k)) {
+                // right
+                main.map.addLine(1);
+            }
         }
     }
     if (C.prompta && k == 27) {
@@ -421,7 +506,11 @@ addEventListener("wheel", function(e) {
     }
     getTr(1);
 });
-CVS.addEventListener("mousedown", e => (C.mousedown = e.button));
+CVS.addEventListener("mousedown", e => {
+    C.mousedown = e.button;
+    C.startX = e.clientX;
+    C.startY = e.clientY;
+});
 CVS.addEventListener("mouseup", e => {
     C.mousedown = false;
     C.blur = false;
@@ -436,6 +525,17 @@ CVS.addEventListener("mousemove", e => {
 });
 addEventListener("contextmenu", e => e.preventDefault());
 addEventListener("blur", () => (C.blur = true));
+addEventListener("focus", () => {
+    if (C.testRunning) {
+        C.testWindow.close();
+        C.testRunning = false;
+    }
+});
+onbeforeunload = function() {
+    if (C.preventExit) {
+        return "Are you sure?";
+    }
+};
 
 var main;
 new Promise(function(res) {

@@ -4,10 +4,14 @@ class Main {
     }
     start() {
         this.screen = new StartScreen(this.canvas).start();
+        if(window.DEVMODE && DEVMODE.active && DEVMODE.map){
+            this.screen.end();
+            this.game();
+        }
     }
-    game(){
+    game() {
         this.screen = new GameScreen(this.canvas).start();
-        this.screen.addEventListener("load", function(s){
+        this.screen.addEventListener("load", function(s) {
             s.addPlayer(1);
         });
     }

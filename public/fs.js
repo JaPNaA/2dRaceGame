@@ -43,6 +43,10 @@ class Map {
     constructor(e) {
         var that = this;
         new Promise(function(res) {
+            if(window.DEVMODE && DEVMODE.active && DEVMODE.map){
+                res(DEVMODE.map);
+                return;
+            }
             var x = new XMLHttpRequest();
             x.open("GET", "map/" + e + ".rgm");
             x.responseType = "text";
@@ -57,7 +61,7 @@ class Map {
         this.callback = null;
     }
     load(e) {
-        var b = btoa(e.replace(/[\n\s]/g, ""))
+        var b = atob(e.replace(/[\n\s]/g, ""))
                 .replace(/=/g, "")
                 .split("Z"),
             c = [];
@@ -120,7 +124,7 @@ class Map {
             }
             f.push(g.join("/"));
         }
-        return atob(f.join("Z"));
+        return btoa(f.join("Z"));
     }
     addLine(d, t) {
         switch (d) {
@@ -174,6 +178,38 @@ class Map {
                     }
                     this.map.unshift(a);
                     this.height++;
+                }
+                break;
+        }
+    }
+    removeLine(d, t) {
+        switch (d) {
+            case 0:
+                for (let q = 0; q < (t || 1); q++) {
+                    this.map.pop();
+                    this.height--;
+                }
+                break;
+            case 1:
+                for (let q = 0; q < (t || 1); q++) {
+                    for (let y of this.map) {
+                        y.pop();
+                    }
+                    this.width--;
+                }
+                break;
+            case 2:
+                for (let q = 0; q < (t || 1); q++) {
+                    for (let y of this.map) {
+                        y.shift();
+                    }
+                    this.width--;
+                }
+                break;
+            case 3:
+                for (let q = 0; q < (t || 1); q++) {
+                    this.map.shift();
+                    this.height--;
                 }
                 break;
         }

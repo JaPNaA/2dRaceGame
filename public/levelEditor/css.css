@@ -46,15 +46,20 @@ canvas {
 .ui .current .sel {
     width: 48px;
     height: 48px;
-    border: 1px solid #F00;
+    border: 1px solid #f00;
 }
 .ui .blockSel .item {
     width: 18px;
     height: 18px;
-    border: 1px solid #FFF;
+    border: 1px solid #fff;
     cursor: pointer;
+    transition: 0.15s;
 }
-.ui .current .sel, .ui .blockSel .item {
+.ui .blockSel .item:hover {
+    border-color: #f44;
+}
+.ui .current .sel,
+.ui .blockSel .item {
     background-size: contain;
     display: inline-block;
     margin: 0;
@@ -77,26 +82,34 @@ canvas {
     transition: 0.15s;
     cursor: pointer;
 }
+.ui .layers .layer:hover {
+    background-color: #333;
+}
 .ui .layers .layer.sel {
-    background-color: #FFF;
+    background-color: #fff;
     color: #000;
 }
 textarea {
     width: 100%;
     height: 45vh;
+    margin: 0;
+    border: 0;
 }
 .button {
     border-radius: 2px;
     min-width: 24px;
     min-height: 16px;
-    color: #FFF;
+    color: #fff;
     background-color: #000;
     font-weight: bold;
     font-family: Arial;
     text-align: center;
     padding: 8px;
     cursor: pointer;
-    font-size:
+    transition: 0.15s;
+}
+.button:hover {
+    background-color: #333;
 }
 .prompta {
     position: fixed;

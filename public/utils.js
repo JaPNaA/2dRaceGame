@@ -124,9 +124,11 @@ CanvasRenderingContext2D.prototype.uBlock = function(
         this.beginPath();
         this.lineWidth = 0.02;
         this.strokeStyle = "#F00";
+        this.globalAlpha = 0.5;
         this.rect(x, y, 1, 1);
         this.stroke();
         this.closePath();
+        this.globalAlpha = 1;
     }
     if (o && o.lum && o.lum < 0) {
         this.fillStyle = "rgba(0, 0, 0, " + Math.abs(o.lum) + ")";
