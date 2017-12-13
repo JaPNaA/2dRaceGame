@@ -177,7 +177,7 @@ class Main {
                     t.addEventListener("click", function() {
                         this.select();
                     });
-                    t.addEventListener("keydown", function(){
+                    t.addEventListener("keydown", function() {
                         C.preventExit = false;
                     });
                     m.addEventListener("click", function() {
@@ -347,7 +347,7 @@ class Main {
                 C.blockp[1]
             );
         }
-        if(C.fillMode){
+        if (C.fillMode) {
             //* Add fill:
             /* @RoxasBTG
                 Variables you'll need:
@@ -418,6 +418,7 @@ function testMap(e) {
     });
     win.addEventListener("beforeunload", () => {
         C.testRunning = false;
+        this.close();
     });
 }
 
@@ -540,13 +541,17 @@ onbeforeunload = function() {
 var main;
 new Promise(function(res) {
     var a = prompta(
-            "Enter level... (int) <br> <input type=text id=in style='width: 100%;'></input>"
+            "Enter level... (int) <br> <input type=text id=in style='width: 100%;'></input> <div id=im class=button>Or import...</div>"
         ),
-        i = document.getElementById("in");
+        i = document.getElementById("in"),
+        m = document.getElementById("im");
     i.focus();
     i.addEventListener("change", function() {
         a.close();
         res(this.value);
+    });
+    m.addEventListener("click", function() {
+        alert("Work in progress");
     });
 }).then(e => {
     main = new Main(e);
