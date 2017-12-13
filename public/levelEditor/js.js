@@ -353,6 +353,7 @@ class Main {
                 Variables you'll need:
                     C.startX - Where the cursor started drag X
                     C.startY -                               Y
+					C.layer -                                Z
                     x - Current position  X
                     y -                   Y
 
@@ -367,7 +368,14 @@ class Main {
                             // Your code
                         }
                     }
+				Functions You'll need
+					this.map.setBlock(x, y, z, blockNumber);
             */
+			for(let y = Math.floor(C.startY / scale + this.cameraY); y < ny; y++){
+				for(let x = Math.floor(C.startX / scale + this.cameraX); x < nx; x++){
+					this.map.setBlock(x, y, C.layer, C.blockp[t == 2 ? 1 : 0]);
+				}
+			}
         }
         C.preventExit = true;
     }
