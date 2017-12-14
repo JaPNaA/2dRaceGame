@@ -89,6 +89,24 @@ canvas {
     background-color: #fff;
     color: #000;
 }
+.ui .toggle {
+    width: 100%;
+    background-color: #000;
+    color: #FFF;
+    border-radius: 2px;
+    padding: 4px 0px;
+    transition: 0.15s;
+    margin: 4px 0px;
+    font-family: Arial;
+    font-weight: bold;
+    font-size: 14px;
+    text-align: center;
+    cursor: pointer;
+}
+.ui .toggle.true {
+    background-color: #FFF;
+    color: #000;
+}
 textarea {
     width: 100%;
     height: 45vh;

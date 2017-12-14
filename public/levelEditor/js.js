@@ -17,7 +17,7 @@ const CVS = document.getElementById("cvs"),
         startY: 0
     };
 window.scale = 28;
-getTr(1);
+getTr(1, 28);
 
 IMG.plusArrow = loadImage("plusArrow.png");
 
@@ -163,6 +163,16 @@ class Main {
             }
             {
                 let a = document.createElement("div");
+                a.classList.add("toggle");
+                a.innerHTML = "Fill Mode";
+                a.addEventListener("click", function() {
+                    fillModeToggle();
+                });
+                x.fillMode = a;
+                x.appendChild(a);
+            }
+            {
+                let a = document.createElement("div");
                 a.style.marginTop = "12px";
                 a.classList.add("button");
                 a.innerHTML = "Export";
@@ -219,6 +229,23 @@ class Main {
                     this.drawBlock(x, y, a, i == 0, i);
                 }
             }
+        }
+        if (C.fillMode && C.mousedown !== false) {
+            let xn = (C.mouseX - innerWidth / 2) / scale + this.cameraX,
+                yn = (C.mouseY - innerHeight / 2) / scale + this.cameraY,
+                x1 = Math.floor(Math.min(xn, C.startX)),
+                y1 = Math.floor(Math.min(yn, C.startY)),
+                x2 = Math.ceil(Math.max(xn, C.startX)),
+                y2 = Math.ceil(Math.max(yn, C.startY));
+            X.sSetup();
+            X.fillStyle = "rgba(255, 0, 0, 0.15)";
+            X.strokeStyle = "#F00";
+            X.lineWidth = 0.02;
+            X.translate(-this.cameraX, -this.cameraY);
+            X.rect(x1, y1, x2 - x1, y2 - y1);
+            X.fill();
+            X.stroke();
+            X.restore();
         }
     }
     drawBlock(x, y, d, o, z) {
@@ -348,34 +375,20 @@ class Main {
             );
         }
         if (C.fillMode) {
-            //* Add fill:
-            /* @RoxasBTG
-                Variables you'll need:
-                    C.startX - Where the cursor started drag X
-                    C.startY -                               Y
-					C.layer -                                Z
-                    x - Current position  X
-                    y -                   Y
-
-                Thing's you'll need to know
-                    for(let i = [Start]; i < [End]; i++){
-                        // Your code, i is the current value you're on.
-                        // You can rename it to 'x' or 'y' to simplify it.
-                    }
-                    for(let y = 1; y < 3; y++){ // in code, Y always goes first
-                        for(let x = 0; x < 2; x++){ // This goes through every point from
-                                                    // (0, 1) to (2, 3)
-                            // Your code
-                        }
-                    }
-				Functions You'll need
-					this.map.setBlock(x, y, z, blockNumber);
-            */
-			for(let y = Math.floor(C.startY / scale + this.cameraY); y < ny; y++){
-				for(let x = Math.floor(C.startX / scale + this.cameraX); x < nx; x++){
-					this.map.setBlock(x, y, C.layer, C.blockp[t == 2 ? 1 : 0]);
-				}
-			}
+            let lx = Math.min(C.startX, nx),
+                ly = Math.min(C.startY, ny),
+                hx = Math.ceil(Math.max(C.startX, nx)),
+                hy = Math.ceil(Math.max(C.startY, ny));
+            for (let y = ly; y < hy; y++) {
+                for (let x = lx; x < hx; x++) {
+                    this.map.setBlock(
+                        Math.floor(x),
+                        Math.floor(y),
+                        C.layer,
+                        C.blockp[t == 2 ? 1 : 0]
+                    );
+                }
+            }
         }
         C.preventExit = true;
     }
@@ -443,10 +456,20 @@ function setLayer(e) {
         }
     }
 }
+function fillModeToggle() {
+    let t = main.ui.fillMode;
+    C.fillMode = !C.fillMode;
+    if (C.fillMode) {
+        t.classList.add("true");
+    } else {
+        t.classList.remove("true");
+    }
+}
 
 addEventListener("keydown", e => {
     var k = e.keyCode;
     C.key[k] = true;
+    C.blur = false;
     if (k == 18) e.preventDefault();
     if (e.altKey) {
         e.preventDefault();
@@ -492,6 +515,9 @@ addEventListener("keydown", e => {
             a[0].close();
         }
     }
+    if (k == 70) {
+        fillModeToggle();
+    }
     if (k >= 49 && k <= 51) {
         setLayer(k - 49);
     }
@@ -517,8 +543,8 @@ addEventListener("wheel", function(e) {
 });
 CVS.addEventListener("mousedown", e => {
     C.mousedown = e.button;
-    C.startX = e.clientX;
-    C.startY = e.clientY;
+    C.startX = (e.clientX - innerWidth / 2) / scale + main.cameraX;
+    C.startY = (e.clientY - innerHeight / 2) / scale + main.cameraY;
 });
 CVS.addEventListener("mouseup", e => {
     C.mousedown = false;
