@@ -1,5 +1,3 @@
-// TODO: add "test map" feature
-
 const CVS = document.getElementById("cvs"),
     X = CVS.getContext("2d"),
     C = {
@@ -14,7 +12,8 @@ const CVS = document.getElementById("cvs"),
         preventExit: false,
         fillMode: false,
         startX: 0,
-        startY: 0
+        startY: 0,
+        data: []
     };
 window.scale = 28;
 getTr(1, 28);
@@ -83,12 +82,14 @@ class Main {
                     let b = document.createElement("div");
                     b.classList.add("sel");
                     b.update = function() {
-                        var f = BLOCKINDEX[C.blockp[0]].fill;
+                        var f = getBlockPreview(C.blockp[0]);
                         if (typeof f == "string") {
-                            this.style.backgroundColor = f;
-                            this.style.backgroundImage = "none";
+                            if (f.substr(0, 4) == "css:") {
+                                this.style = f.substring(4, f.length);
+                            } else {
+                                this.style.backgroundColor = f;
+                            }
                         } else {
-                            this.style.backgroundColor = "rgba(0,0,0,0)";
                             this.style.backgroundImage = "url(" + f.src + ")";
                         }
                     };
@@ -100,18 +101,47 @@ class Main {
                     let b = document.createElement("div");
                     b.classList.add("sel");
                     b.update = function() {
-                        var f = BLOCKINDEX[C.blockp[1]].fill;
+                        var f = getBlockPreview(C.blockp[1]);
                         if (typeof f == "string") {
-                            this.style.backgroundColor = f;
-                            this.style.backgroundImage = "none";
+                            if (f.substr(0, 4) == "css:") {
+                                this.style = f.substring(4, f.length);
+                            } else {
+                                this.style.backgroundColor = f;
+                            }
                         } else {
-                            this.style.backgroundColor = "rgba(0,0,0,0)";
                             this.style.backgroundImage = "url(" + f.src + ")";
                         }
                     };
                     b.update();
                     a.appendChild(b);
                     x.sel.push(b);
+                }
+                {
+                    let b = document.createElement("div");
+                    b.classList.add("data");
+                    b.innerHTML = "data";
+                    b.addEventListener("click", function() {
+                        var pa = prompta(
+                                "Set data values of blocks to...<br><input id=dtv style='width:100%;'></input>"
+                            ),
+                            a = document.getElementById("dtv");
+                        a.value = C.data.join(", ");
+                        a.focus();
+                        a.select();
+                        a.addEventListener("change", function() {
+                            var p = this.value.split(/\s*,\s*/g),
+                                pl = p.length;
+                            for(let i = 0; i < pl; i++){
+                                let a = p[i] / 1;
+                                if(a || a === 0){
+                                    p[i] = a;
+                                }
+                            }
+                            C.data = p;
+                            pa.close();
+                        });
+                    });
+                    a.appendChild(b);
                 }
                 x.appendChild(a);
             }
@@ -121,14 +151,16 @@ class Main {
                 for (let i in BLOCKINDEX) {
                     if (!(i * 1) && i != 0) continue;
                     let b = document.createElement("div"),
-                        f = BLOCKINDEX[i].fill;
+                        f = getBlockPreview(i);
                     b.classList.add("item");
                     b.block = i;
                     if (typeof f == "string") {
-                        b.style.backgroundColor = f;
-                        b.style.backgroundImage = "none";
+                        if (f.substr(0, 4) == "css:") {
+                            b.style = f.substring(4, f.length);
+                        } else {
+                            b.style.backgroundColor = f;
+                        }
                     } else {
-                        b.style.backgroundColor = "rgba(0,0,0,0)";
                         b.style.backgroundImage = "url(" + f.src + ")";
                     }
                     b.addEventListener("mouseup", function(e) {
@@ -249,8 +281,17 @@ class Main {
         }
     }
     drawBlock(x, y, d, o, z) {
-        if (!BLOCKINDEX[d]) return;
-        var lum = 0;
+        if (!d || !BLOCKINDEX[d.id]) return;
+        if (z != 0 && d.id == 0) return;
+        var lum = 0,
+            f;
+
+        if (typeof BLOCKINDEX[d.id].fill == "function") {
+            f = BLOCKINDEX[d.id].fill(d);
+        } else {
+            f = BLOCKINDEX[d.id].fill;
+        }
+
         if (z == 2) {
             lum = -0.3;
         } else if (z == 1) {
@@ -259,14 +300,14 @@ class Main {
         X.uBlock(
             x - this.cameraX,
             y - this.cameraY,
-            BLOCKINDEX[d].fill,
+            f,
             null,
             null,
             null,
             null,
             {
-                outline: o,
-                lum: lum
+                lum: lum,
+                outline: true
             }
         );
     }
@@ -291,7 +332,7 @@ class Main {
             {
                 let k = C.key,
                     s = 100 * tt;
-                if (k[18]) break m;
+                if (k[18] || C.prompta) break m;
                 if (k[87] || k[38]) {
                     // up
                     this.cameraVY += -s;
@@ -364,14 +405,16 @@ class Main {
                 Math.floor(nx),
                 Math.floor(ny),
                 C.layer,
-                C.blockp[0]
+                C.blockp[0],
+                C.data
             );
         } else if (t == 2) {
             this.map.setBlock(
                 Math.floor(nx),
                 Math.floor(ny),
                 C.layer,
-                C.blockp[1]
+                C.blockp[1],
+                C.data
             );
         }
         if (C.fillMode) {
@@ -385,7 +428,8 @@ class Main {
                         Math.floor(x),
                         Math.floor(y),
                         C.layer,
-                        C.blockp[t == 2 ? 1 : 0]
+                        C.blockp[t == 2 ? 1 : 0],
+                        C.data
                     );
                 }
             }
@@ -465,11 +509,23 @@ function fillModeToggle() {
         t.classList.remove("true");
     }
 }
+function getBlockPreview(e) {
+    return BLOCKINDEX[e].preview || BLOCKINDEX[e].fill;
+}
 
 addEventListener("keydown", e => {
     var k = e.keyCode;
     C.key[k] = true;
     C.blur = false;
+    if (C.prompta) {
+        if (k == 27) {
+            let a;
+            while ((a = document.getElementsByClassName("prompta")).length) {
+                a[0].close();
+            }
+        }
+        return;
+    }
     if (k == 18) e.preventDefault();
     if (e.altKey) {
         e.preventDefault();
@@ -507,12 +563,6 @@ addEventListener("keydown", e => {
                 // right
                 main.map.addLine(1);
             }
-        }
-    }
-    if (C.prompta && k == 27) {
-        let a;
-        while ((a = document.getElementsByClassName("prompta")).length) {
-            a[0].close();
         }
     }
     if (k == 70) {

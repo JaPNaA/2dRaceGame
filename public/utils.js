@@ -1,6 +1,6 @@
 // util[ities].js
 
-function getTr(e, s) {
+function getTr(e, s, ofy, ofx) {
     // get offset and scale: param boolean e: reload data
     if (!e && getTr.p) return getTr.p;
     var v = s || 30,
@@ -14,6 +14,8 @@ function getTr(e, s) {
     } else {
         r.sc = window.scale || innerWidth / v;
     }
+    r.tx += (ofx || 0) * r.sc;
+    r.ty += (ofy || 0) * r.sc;
     return (getTr.p = r);
 }
 
@@ -179,6 +181,6 @@ CanvasRenderingContext2D.prototype.uImg = function(
     this.restore();
 };
 
-Array.prototype.last = function(){
+Array.prototype.last = function() {
     return this[this.length - 1];
-}
+};

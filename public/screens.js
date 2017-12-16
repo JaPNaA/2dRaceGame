@@ -12,7 +12,8 @@ class Screen {
             mouseup: [],
             click: [],
             keydown: [],
-            keyup: []
+            keyup: [],
+            wheel: []
         };
         this.eventHandler = function(e) {
             for (let i of that.events[e.type]) {
@@ -136,8 +137,10 @@ class StartScreen extends Screen {
 
 class GameScreen extends Screen {
     constructor(C) {
-        super(C, 75);
-        this.scale = 75;
+        super(C, 60);
+        this.scale = 60;
+        this.maxScale = 75;
+        this.minScale = 10;
         var that = this;
 
         this.game = new Game(this, 0);
@@ -145,6 +148,19 @@ class GameScreen extends Screen {
         this.obs.push(this.game);
         this.tickLoop = true;
         C.hideMouse = true;
+        this.on("wheel", function(e){
+            if(e.deltaY < 0){
+                if(--that.scale < that.minScale){
+                    that.scale = that.minScale;
+                }
+            } else {
+                if(++that.scale > that.maxScale){
+                    that.scale = that.maxScale;
+                }
+            }
+            let x = that.game.cameraFocus;
+            getTr(1, that.scale, -x.width / 2, -x.height / 2);
+        });
     }
     addPlayer(e) {
         this.game.addPlayer(e);

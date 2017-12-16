@@ -17,12 +17,15 @@ class Canvas {
         this.X = this.canvas.getContext("2d");
         addEventListener("resize", () => that.resize());
         addEventListener("mousemove", () => that.mouseMove());
-        addEventListener("keydown", function(e){
-            if(!e.ctrlKey && ![122].includes(e.keyCode)) e.preventDefault();
+        addEventListener("keydown", function(e) {
+            if (!e.ctrlKey && ![122].includes(e.keyCode)) e.preventDefault();
             that.key[e.keyCode] = true;
         });
-        addEventListener("keyup", function(e){
-            if(!e.ctrlKey) e.preventDefault();
+        addEventListener("blur", function() {
+            that.key.length = 0;
+        });
+        addEventListener("keyup", function(e) {
+            if (!e.ctrlKey) e.preventDefault();
             that.key[e.keyCode] = false;
         });
         this.resize();
@@ -39,11 +42,11 @@ class Canvas {
     }
     mouseMove() {
         var that = this;
-        if(!this.hideMouse) return;
+        if (!this.hideMouse) return;
         clearTimeout(this.hideMouseSI);
         this.canvas.style.cursor = "default";
         this.hideMouseSI = setTimeout(function() {
-            if(!that.hideMouse) return;
+            if (!that.hideMouse) return;
             that.canvas.style.cursor = "none";
         }, 1500);
     }
