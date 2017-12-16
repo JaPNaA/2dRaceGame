@@ -83,6 +83,7 @@ class Main {
                     b.classList.add("sel");
                     b.update = function() {
                         var f = getBlockPreview(C.blockp[0]);
+                        this.style = "";
                         if (typeof f == "string") {
                             if (f.substr(0, 4) == "css:") {
                                 this.style = f.substring(4, f.length);
@@ -121,25 +122,7 @@ class Main {
                     b.classList.add("data");
                     b.innerHTML = "data";
                     b.addEventListener("click", function() {
-                        var pa = prompta(
-                                "Set data values of blocks to...<br><input id=dtv style='width:100%;'></input>"
-                            ),
-                            a = document.getElementById("dtv");
-                        a.value = C.data.join(", ");
-                        a.focus();
-                        a.select();
-                        a.addEventListener("change", function() {
-                            var p = this.value.split(/\s*,\s*/g),
-                                pl = p.length;
-                            for(let i = 0; i < pl; i++){
-                                let a = p[i] / 1;
-                                if(a || a === 0){
-                                    p[i] = a;
-                                }
-                            }
-                            C.data = p;
-                            pa.close();
-                        });
+                        requestDataValue();
                     });
                     a.appendChild(b);
                 }
@@ -509,8 +492,33 @@ function fillModeToggle() {
         t.classList.remove("true");
     }
 }
+
 function getBlockPreview(e) {
     return BLOCKINDEX[e].preview || BLOCKINDEX[e].fill;
+}
+
+function requestDataValue() {
+    var pa = prompta(
+            "Set data values of blocks to...<br><input id=dtv style='width:100%;'></input>"
+        ),
+        a = document.getElementById("dtv");
+    a.value = C.data.join("; ");
+    setTimeout(() => {
+        a.focus();
+        a.select();
+    }, 1);
+    a.addEventListener("change", function() {
+        var p = this.value.split(/\s*;\s*/g),
+            pl = p.length;
+        for (let i = 0; i < pl; i++) {
+            let a = p[i] / 1;
+            if (a || a === 0) {
+                p[i] = a;
+            }
+        }
+        C.data = p;
+        pa.close();
+    });
 }
 
 addEventListener("keydown", e => {
@@ -565,11 +573,24 @@ addEventListener("keydown", e => {
             }
         }
     }
-    if (k == 70) {
-        fillModeToggle();
+    if (!e.ctrlKey) {
+        if (k == 70) {
+            fillModeToggle();
+        }
+        if (k >= 49 && k <= 51) {
+            setLayer(k - 49);
+        }
+        if (k == 82) {
+            requestDataValue();
+        }
     }
-    if (k >= 49 && k <= 51) {
-        setLayer(k - 49);
+    if (k == 9) {
+        let s = e.shiftKey ? 1 : 0;
+        e.preventDefault();
+        if (!BLOCKINDEX[++C.blockp[s]]) {
+            C.blockp[s] = 0;
+        }
+        main.ui.sel[s].update();
     }
 });
 addEventListener("keyup", e => (C.key[e.keyCode] = false));
