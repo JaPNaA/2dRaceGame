@@ -646,10 +646,11 @@ onbeforeunload = function() {
 var main;
 new Promise(function(res) {
     var a = prompta(
-            "Enter level... (int) <br> <input type=text id=in style='width: 100%;'></input> <div id=im class=button>Or import...</div>"
+            "Enter level... (int) <br> <input type=text id=in style='width: 100%;'></input> <div id=im class=button>Or import...</div><div id=kbs class=button>View controls</div>"
         ),
         i = document.getElementById("in"),
-        m = document.getElementById("im");
+        m = document.getElementById("im"),
+        k = document.getElementById("kbs");
     i.focus();
     i.addEventListener("change", function() {
         a.close();
@@ -657,6 +658,19 @@ new Promise(function(res) {
     });
     m.addEventListener("click", function() {
         alert("Work in progress");
+    });
+    k.addEventListener("click", function() {
+        var w = open(
+            "levelEditor/controls.txt",
+            "",
+            "width=524, height=" +
+                (innerHeight - 64) +
+                ", top=" +
+                (screenY + 64) +
+                ", left=" +
+                screenX
+        );
+        w.document.title = "Level Editor - Controls";
     });
 }).then(e => {
     main = new Main(e);
