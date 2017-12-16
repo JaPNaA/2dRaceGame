@@ -41,6 +41,7 @@ CanvasRenderingContext2D.prototype.sSetup = function() {
     this.save();
     this.translate(tx, ty);
     this.scale(sc, sc);
+    this.imageSmoothingEnabled = false;
 };
 
 CanvasRenderingContext2D.prototype.sFill = function(c) {
