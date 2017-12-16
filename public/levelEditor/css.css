@@ -24,6 +24,7 @@ canvas {
     padding-top: 32px;
     overflow: hidden;
     box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.4);
+    width: 120px;
 }
 .ui div.drag {
     border-radius: 4px 4px 0px 0px;
@@ -60,6 +61,9 @@ canvas {
     font-weight: bold;
     cursor: pointer;
 }
+.ui .blockSel {
+    line-height: 0px;
+}
 .ui .blockSel .item {
     width: 18px;
     height: 18px;
@@ -76,6 +80,7 @@ canvas {
     display: inline-block;
     margin: 0;
     padding: 0;
+    image-rendering: pixelated;
 }
 .ui .layers {
     display: grid;
@@ -85,6 +90,7 @@ canvas {
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 0;
     padding: 0;
+    margin: 4px 0;
 }
 .ui .layers .layer {
     text-align: center;

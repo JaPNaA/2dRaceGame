@@ -107,8 +107,12 @@ CanvasRenderingContext2D.prototype.uBlock = function(
     this.sSetup();
 
     if (typeof c == "string") {
-        this.fillStyle = c;
-        this.fillRect(x, y, 1, 1);
+        this.strokeStyle = this.fillStyle = c;
+        this.lineWidth = 0.01;
+        this.beginPath();
+        this.rect(x, y, 1, 1);
+        this.fill();
+        this.stroke();
     } else {
         if (o && o.lum && o.lum > 0) this.globalAlpha = 1 - o.lum;
         this.drawImage(

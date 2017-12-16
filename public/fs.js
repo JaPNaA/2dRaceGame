@@ -1,17 +1,25 @@
 function loadImage(e) {
     var a = document.createElement("img");
-    a.src = "img/" + e;
+    a.src = "img/" + e + ".png";
     return a;
 }
 const IMG = {
-        floorBlock: loadImage("floorBlock.png"),
-        startBlock: loadImage("startBlock.png"),
-        finishBlock: loadImage("finishBlock.png"),
-        glassBlock: loadImage("glassBlock.png"),
-        player: loadImage("player.png")
+        floorBlock: loadImage("floorBlock"),
+        startBlock: loadImage("startBlock"),
+        finishBlock: loadImage("finishBlock"),
+        glassBlock: loadImage("glassBlock"),
+        player: loadImage("player"),
+        brick: loadImage("brick"),
+        dirt: loadImage("dirt"),
+        grass: loadImage("grass"),
+        gravel: loadImage("gravel"),
+        log: loadImage("log"),
+        wood: loadImage("wood"),
+        sand: loadImage("sand"),
+        tallGrass: loadImage("tallGrass")
     },
     BLOCKINDEX = {
-        NONSOLID: [undefined, 0],
+        NONSOLID: [undefined, 0, 13],
         0: {
             name: "Air",
             fill: "rgba(0,0,0,0)",
@@ -44,6 +52,38 @@ const IMG = {
                 "css:background-image: linear-gradient(45deg, #F00, #FF0, #0F0, #0FF, #00F, #F0F, #F00);",
             caption: "aLL tHe cOloRs!1!!1 \nAs suggested by DR4T",
             data: 1
+        },
+        6: {
+            name: "Brick",
+            fill: IMG.brick
+        },
+        7: {
+            name: "Dirt",
+            fill: IMG.dirt
+        },
+        8: {
+            name: "Grass",
+            fill: IMG.grass
+        },
+        9: {
+            name: "Gravel",
+            fill: IMG.gravel
+        },
+        10: {
+            name: "Log",
+            fill: IMG.log
+        },
+        11: {
+            name: "Wood",
+            fill: IMG.wood
+        },
+        12: {
+            name: "Sand",
+            fill: IMG.sand
+        },
+        13: {
+            name: "Tall Grass",
+            fill: IMG.tallGrass
         }
     };
 
@@ -88,7 +128,7 @@ class Map {
                 for (let z = 0; z < al; z++) {
                     let d = a[z].split(this.separators[3]);
                     a[z] = {
-                        id: d[0] / 1,
+                        id: parseInt(d[0], 36),
                         data: d[1].split(this.separators[4])
                     };
                 }
@@ -119,7 +159,7 @@ class Map {
     }
     setBlock(x, y, z, d, dt) {
         var a = this.map[y],
-            bi = BLOCKINDEX[d];
+            bi = BLOCKINDEX[d / 1];
         if (!a) return;
         a = a[x];
         if (!a) return;
@@ -131,7 +171,7 @@ class Map {
                 return false;
             }
         }
-        a[z].id = d;
+        a[z].id = d / 1;
         return true;
     }
     export() {

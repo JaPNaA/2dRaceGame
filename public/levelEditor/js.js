@@ -18,7 +18,7 @@ const CVS = document.getElementById("cvs"),
 window.scale = 28;
 getTr(1, 28);
 
-IMG.plusArrow = loadImage("plusArrow.png");
+IMG.plusArrow = loadImage("plusArrow");
 
 class Main {
     constructor(e) {
