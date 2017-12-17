@@ -36,6 +36,7 @@ class Socket {
             if (b) {
                 g.splice(g.indexOf(b), 1);
             }
+            return;
         }
 
         var a = JSON.parse("[" + e + "]"),

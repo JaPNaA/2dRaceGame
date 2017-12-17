@@ -85,20 +85,21 @@ class Game {
         } else {
             {
                 let k = this.screen.C.key,
+                    t = this.screen.C.touch,
                     s = 100 * tt;
-                if (k[87] || k[38] || k[32]) {
+                if (k[87] || k[38] || k[32] || t[0]) {
                     // up
                     this.cameraVY += -s;
                 }
-                if (k[65] || k[37]) {
+                if (k[65] || k[37] || t[1]) {
                     // left
                     this.cameraVX += -s;
                 }
-                if (k[83] || k[40] || k[16]) {
+                if (k[83] || k[40] || k[16] || t[2]) {
                     // down
                     this.cameraVY += s;
                 }
-                if (k[68] || k[39]) {
+                if (k[68] || k[39] || t[3]) {
                     // right
                     this.cameraVX += s;
                 }

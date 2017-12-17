@@ -13,8 +13,39 @@ class Canvas {
         this.hideMouse = false;
         this.hideMouseSI = 0;
         this.key = [];
+        this.touch = [];
+        this.touchdown = false;
+        this.startTouch = [];
+        this.touchPos = [];
         this.scale = 30;
         this.X = this.canvas.getContext("2d");
+        this.touchEnabled = false;
+
+        addEventListener("touchstart", function (e) {
+            e.preventDefault();
+            that.touchEnabled = true;
+
+            if (!that.touchdown) {
+                let t = e.touches[0],
+                    s = that.startTouch;
+                s[0] = t.clientX;
+                s[1] = t.clientY;
+            }
+
+            that.touchdown = true;
+        }, { passive: false });
+        addEventListener("touchmove", function (e) {
+            e.preventDefault();
+            var a = e.changedTouches[0],
+                b = that.touchPos;
+            b[0] = a.clientX;
+            b[1] = a.clientY;
+        }, { passive: false });
+        addEventListener("touchend", function (e) {
+            e.preventDefault();
+            if (e.touches.length == 0) that.touchdown = false;
+        }, { passive: false });
+
         addEventListener("resize", () => that.resize());
         addEventListener("mousemove", () => that.mouseMove());
         addEventListener("keydown", function(e) {

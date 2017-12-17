@@ -10,6 +10,9 @@ class Screen {
             mousedown: [],
             mousemove: [],
             mouseup: [],
+            touchstart: [],
+            touchmove: [],
+            touchend: [],
             click: [],
             keydown: [],
             keyup: [],
@@ -90,7 +93,10 @@ class Screen {
         return this;
     }
     on(t, f) {
-        this.events[t].push(f);
+        var a = t.split(" ");
+        for (let i of a) {
+            this.events[i].push(f);
+        }
         return this;
     }
     addEventListener(e, f) {
@@ -124,11 +130,11 @@ class StartScreen extends Screen {
                     ".75px Arial",
                     1
                 );
-                X.uText("CLICK TO START", 0, 5, "#888", ".6px monospace", 1);
+                X.uText("CLICK OR TAP TO START", 0, 5, "#888", ".6px monospace", 1);
                 // X.uGrid();
             }
         });
-        this.on("click", function() {
+        this.on("click touchstart", function() {
             that.end();
             main.game();
         });

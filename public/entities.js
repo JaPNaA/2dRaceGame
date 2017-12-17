@@ -103,9 +103,10 @@ class Player extends Entity {
         )
             return;
         var k = this.game.screen.C.key,
+            t = this.game.screen.C.touch,
             s = 40 * tt,
             b = s * 15;
-        if (k[87] || k[38] || k[32]) {
+        if (k[87] || k[38] || k[32] || t[0]) {
             // up
             if (this.grounded) {
                 this.vy -= this.gravity * s * this.height;
@@ -116,7 +117,7 @@ class Player extends Entity {
             this.lastK.u = false;
         }
 
-        if (k[83] || k[40] || k[16]) {
+        if (k[83] || k[40] || k[16] || t[2]) {
             // down
             this.vy += s;
             this.lastK.d = true;
@@ -124,7 +125,7 @@ class Player extends Entity {
             this.lastK.d = false;
         }
 
-        if (k[65] || k[37]) {
+        if (k[65] || k[37] || t[1]) {
             // left
             if (this.lastK.l) {
                 this.vx -= s;
@@ -137,7 +138,7 @@ class Player extends Entity {
             this.lastK.l = false;
         }
 
-        if (k[68] || k[39]) {
+        if (k[68] || k[39] || t[3]) {
             // right
             if (this.lastK.r) {
                 this.vx += s;
