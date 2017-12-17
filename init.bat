@@ -1,4 +1,4 @@
 @echo off
 :a
-node.exe node_main.js
+node.exe main.js
 goto a
