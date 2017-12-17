@@ -41,10 +41,16 @@ class Player extends Entity {
         this.y = sb[1] - this.height;
         this.respawn = true;
         this.fill = IMG.player;
+        this.socket = null;
     }
     tick(tt) {
         this.kbControl(tt);
         this.physics(tt);
+
+        if (this.socket) {
+            this.socket.send(this);
+        }
+
         if(this.respawn && this.y > this.game.map.height + 10){
             let sb = this.game.map.startBlock;
             this.x = sb[0];

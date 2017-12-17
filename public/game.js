@@ -178,8 +178,12 @@ class Game {
         if (e) {
             this.cameraFocus = p;
             getTr(1, this.screen.scale, -p.width / 2, -p.height / 2);
+            SOCKET.setSendPlayer(p);
+        } else {
+            SOCKET.addControl(p);
         }
         this.entities.push(p);
+        return p;
     }
     block(t, o) {
         // 0: below, 1: left, 2: right, 3: above

@@ -144,6 +144,7 @@ class GameScreen extends Screen {
         var that = this;
 
         this.game = new Game(this, 0);
+        SOCKET.bindGame(this.game);
         this.game.addEventListener("load", () => that.dispatchEvent("load"));
         this.obs.push(this.game);
         this.tickLoop = true;

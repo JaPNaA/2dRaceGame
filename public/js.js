@@ -1,3 +1,5 @@
+const SOCKET = new Socket(location.href.replace("http", "ws"));
+
 class Main {
     constructor() {
         this.canvas = new Canvas().append();
