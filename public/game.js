@@ -115,34 +115,6 @@ class Game {
         }
     }
     drawBlock(X, x, y, d, z) {
-        // X.uBlock(x - this.cameraX, y - this.cameraY, BLOCKINDEX[d].fill);
-        // if (!BLOCKINDEX[d.id]) return;
-        // var lum = 0, f;
-        //
-        // if(typeof BLOCKINDEX[d.id].fill == "function"){
-        //     f = BLOCKINDEX[d.id].fill(d);
-        // } else {
-        //     f = BLOCKINDEX[d.id].fill;
-        // }
-        //
-        // if (z == 2) {
-        //     lum = -0.3;
-        // } else if (z == 1) {
-        //     lum = 0.1;
-        // }
-        //
-        // X.uBlock(
-        //     x - this.cameraX,
-        //     y - this.cameraY,
-        //     f,
-        //     null,
-        //     null,
-        //     null,
-        //     null,
-        //     {
-        //         lum: lum
-        //     }
-        // );
         if (!d || !BLOCKINDEX[d.id] || d.id == 0) return;
         var lum = 0,
             f;
