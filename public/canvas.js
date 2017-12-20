@@ -40,9 +40,27 @@ class Canvas {
                 b = that.touchPos;
             b[0] = a.clientX;
             b[1] = a.clientY;
+
+            that.touch.length = 0;
+            if (b[0] > that.startTouch[0]) {
+                console.log("right");
+                that.touch[3] = true;
+            } else {
+                console.log("left");
+                that.touch[1] = true;
+            }
+            if (b[1] > that.startTouch[1]) {
+                console.log("down");
+                that.touch[4] = true;
+            } else {
+                console.log("up");
+                that.touch[0] = true;
+            }
+
         }, { passive: false });
         addEventListener("touchend", function (e) {
             e.preventDefault();
+            that.touch.length = 0;
             if (e.touches.length == 0) that.touchdown = false;
         }, { passive: false });
 

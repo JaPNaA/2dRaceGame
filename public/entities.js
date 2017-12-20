@@ -109,7 +109,7 @@ class Player extends Entity {
         if (k[87] || k[38] || k[32] || t[0]) {
             // up
             if (this.grounded) {
-                this.vy -= this.gravity * s * this.height;
+                this.vy -= this.gravity * this.height * 0.25;
                 // this.vy -= s;
                 this.lastK.u = true;
             }
