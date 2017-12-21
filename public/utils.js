@@ -4,15 +4,16 @@ function getTr(e, s, ofy, ofx) {
     // get offset and scale: param boolean e: reload data
     if (!e && getTr.p) return getTr.p;
     var v = s || 30,
+        dp = devicePixelRatio,
         r = {
             sc: null,
-            tx: innerWidth / 2,
-            ty: innerHeight / 2
+            tx: innerWidth * dp / 2,
+            ty: innerHeight * dp / 2
         };
     if (innerWidth < innerHeight * 16 / 9) {
-        r.sc = window.scale || innerHeight / v * 16 / 9;
+        r.sc = window.scale || innerHeight / v * 16 / 9 * dp;
     } else {
-        r.sc = window.scale || innerWidth / v;
+        r.sc = window.scale || innerWidth / v * dp;
     }
     r.tx += (ofx || 0) * r.sc;
     r.ty += (ofy || 0) * r.sc;
@@ -82,16 +83,16 @@ CanvasRenderingContext2D.prototype.uGrid = function() {
 
     this.strokeStyle = "#F00";
     this.lineWidth = 1;
-    for (let y = 0; y < innerHeight / sc; y++) {
+    for (let y = 0; y < this.canvas.height / sc; y++) {
         this.sLine(0, y * sc, 40 * sc, y * sc);
     }
 
-    for (let x = 0; x < innerWidth / sc; x++) {
+    for (let x = 0; x < this.canvas.width / sc; x++) {
         this.sLine(x * sc, 0, x * sc, 40 * sc);
     }
 
-    this.sLine(innerWidth / 2, 0, innerWidth / 2, 40 * sc, "#0F0", 2);
-    this.sLine(0, innerHeight / 2, 40 * sc, innerHeight / 2, "#0F0", 2);
+    this.sLine(this.canvas.height / 2, 0, this.canvas.width / 2, 40 * sc, "#0F0", 2);
+    this.sLine(0, this.canvas.height / 2, 40 * sc, this.canvas.width / 2, "#0F0", 2);
 };
 CanvasRenderingContext2D.prototype.uBlock = function(
     x,
