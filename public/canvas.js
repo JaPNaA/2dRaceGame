@@ -42,9 +42,9 @@ class Canvas {
             b[1] = a.clientY;
 
             that.touch.length = 0;
-            if (b[0] > that.startTouch[0] - 32) {
+            if (b[0] > that.startTouch[0] + 32) {
                 that.touch[3] = true;
-            } else if (b[0] < that.startTouch[0] + 32){
+            } else if (b[0] < that.startTouch[0] - 32){
                 that.touch[1] = true;
             }
             if (b[1] > that.startTouch[1] - 32) {

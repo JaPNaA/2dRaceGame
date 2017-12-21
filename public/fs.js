@@ -194,6 +194,12 @@ class Map {
         }
         return btoa(f.join(this.separators[0]));
     }
+    newCell() {
+        return {
+            id: 0,
+            data: [""]
+        };
+    }
     addLine(d, t) {
         switch (d) {
             case 0:
@@ -202,7 +208,7 @@ class Map {
                     for (let i = 0; i < this.width; i++) {
                         let b = [];
                         for (let i = 0; i < this.layers; i++) {
-                            b.push(0);
+                            b.push(this.newCell());
                         }
                         a.push(b);
                     }
@@ -215,7 +221,7 @@ class Map {
                     for (let y of this.map) {
                         let x = [];
                         for (let i = 0; i < this.layers; i++) {
-                            x.push(0);
+                            x.push(this.newCell());
                         }
                         y.push(x);
                     }
@@ -227,7 +233,7 @@ class Map {
                     for (let y of this.map) {
                         let x = [];
                         for (let i = 0; i < this.layers; i++) {
-                            x.push(0);
+                            x.push(this.newCell());
                         }
                         y.unshift(x);
                     }
@@ -240,7 +246,7 @@ class Map {
                     for (let i = 0; i < this.width; i++) {
                         let b = [];
                         for (let i = 0; i < this.layers; i++) {
-                            b.push(0);
+                            b.push(this.newCell());
                         }
                         a.push(b);
                     }

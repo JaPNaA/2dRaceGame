@@ -36,11 +36,14 @@ CanvasRenderingContext2D.prototype.sLine = function(x, y, a, b, s, t) {
     this.stroke();
     this.closePath();
 };
-CanvasRenderingContext2D.prototype.sSetup = function() {
+CanvasRenderingContext2D.prototype.sSetup = function(x, y) {
     // transform context
     var { sc, tx, ty } = getTr();
     this.save();
     this.translate(tx, ty);
+    if (x && y) {
+        this.translate(-x * sc, -y * sc);
+    }
     this.scale(sc, sc);
     this.imageSmoothingEnabled = false;
 };
@@ -94,18 +97,9 @@ CanvasRenderingContext2D.prototype.uGrid = function() {
     this.sLine(this.canvas.height / 2, 0, this.canvas.width / 2, 40 * sc, "#0F0", 2);
     this.sLine(0, this.canvas.height / 2, 40 * sc, this.canvas.width / 2, "#0F0", 2);
 };
-CanvasRenderingContext2D.prototype.uBlock = function(
-    x,
-    y,
-    c,
-    sx,
-    sy,
-    sw,
-    sh,
-    o
-) {
+CanvasRenderingContext2D.prototype.uBlock = function (x, y, c, sx, sy, sw, sh, o, ofx, ofy) {
     // draw block
-    this.sSetup();
+    this.sSetup(ofx, ofy);
 
     if (typeof c == "string") {
         this.strokeStyle = this.fillStyle = c;
@@ -145,32 +139,24 @@ CanvasRenderingContext2D.prototype.uBlock = function(
 
     this.restore();
 };
-CanvasRenderingContext2D.prototype.uRect = function(x, y, w, h, c) {
+CanvasRenderingContext2D.prototype.uRect = function(x, y, w, h, c, ofx, ofy) {
     // draw rectangle (with transformations)
-    this.sSetup();
+    this.sSetup(ofx, ofy);
 
     this.fillStyle = c;
     this.fillRect(x, y, w, h);
 
     this.restore();
 };
-CanvasRenderingContext2D.prototype.uImg = function(
-    c,
-    sx,
-    sy,
-    sw,
-    sh,
-    x,
-    y,
-    w,
-    h,
-    f
-) {
-    this.sSetup();
+CanvasRenderingContext2D.prototype.uImg = function (c, sx, sy, sw, sh, x, y, w, h, f, ofx, ofy) {
+    this.sSetup(ofx, ofy);
+    var { sc } = getTr();
 
     if (f) {
-        this.translate(w, 0);
+        this.translate(w + x, y);
         this.scale(-1, 1);
+    } else {
+        this.translate(x, y);
     }
     this.drawImage(
         c,
@@ -178,8 +164,8 @@ CanvasRenderingContext2D.prototype.uImg = function(
         sy || 0,
         sw || c.width,
         sh || c.height,
-        x,
-        y,
+        0,
+        0,
         w,
         h
     );

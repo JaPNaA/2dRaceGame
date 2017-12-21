@@ -55,7 +55,7 @@ class Screen {
         }
         if (this.tickLoop) {
             var t = this;
-            this.sI = setInterval(() => this.tick(t), 1);
+            this.sI = setInterval(() => this.tick(t), 15);
         }
         return this;
     }

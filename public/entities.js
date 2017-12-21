@@ -15,9 +15,9 @@ class Entity {
     draw(X, cx, cy) {
         //* add animation
         if(typeof this.fill == 'string'){
-            X.uRect(this.x - cx, this.y - cy, this.width, this.height, this.fill);
+            X.uRect(this.x, this.y, this.width, this.height, this.fill, cx, cy);
         } else {
-            X.uImg(this.fill, 0, 0, 0, 0, this.x - cx, this.y - cy, this.width, this.height, this.facing);
+            X.uImg(this.fill, 0, 0, 0, 0, this.x, this.y, this.width, this.height, this.facing, cx, cy);
         }
     }
     tick() {}

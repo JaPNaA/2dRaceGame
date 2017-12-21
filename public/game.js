@@ -131,8 +131,8 @@ class Game {
             lum = 0.1;
         }
         X.uBlock(
-            x - this.cameraX,
-            y - this.cameraY,
+            x,
+            y,
             f,
             null,
             null,
@@ -140,7 +140,9 @@ class Game {
             null,
             {
                 lum: lum
-            }
+            },
+            this.cameraX,
+            this.cameraY
         );
     }
     background(X) {
