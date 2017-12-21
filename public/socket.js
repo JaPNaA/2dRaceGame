@@ -56,7 +56,7 @@ class Socket {
                 q.y = i[2];
                 q.vx = i[3];
                 q.vy = i[4];
-                q.facing = false; // i[5], but there's a facing glitch that must be fixed first
+                q.facing = i[5];
             }
         }
     }
