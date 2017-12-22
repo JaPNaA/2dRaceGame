@@ -152,3 +152,18 @@ class Player extends Entity {
         }
     }
 }
+
+class Goomba extends Entity{
+    constructor(g) {
+        super(g);
+
+        this.x = 0;
+        this.y = 0;
+        this.width = 1;
+        this.height = 1;
+        this.fill = "#800";
+    }
+    tick(tt) {
+        this.x += tt;
+    }
+}
