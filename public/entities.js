@@ -52,12 +52,16 @@ class Player extends Entity {
         }
 
         if(this.respawn && this.y > this.game.map.height + 10){
-            let sb = this.game.map.startBlock;
-            this.x = sb[0];
-            this.y = sb[1] - this.height;
-            this.vx = 0;
-            this.vy = 0;
+            this.die();
         }
+    }
+    die() {
+        AUDIO.death.play();
+        var sb = this.game.map.startBlock;
+        this.x = sb[0];
+        this.y = sb[1] - this.height;
+        this.vx = 0;
+        this.vy = 0;
     }
     physics(tt) {
         this.x += this.vx * tt;
