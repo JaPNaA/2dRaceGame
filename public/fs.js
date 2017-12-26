@@ -8,7 +8,6 @@ const IMG = {
         startBlock: loadImage("startBlock"),
         finishBlock: loadImage("finishBlock"),
         glassBlock: loadImage("glassBlock"),
-        player: loadImage("player"),
         brick: loadImage("brick"),
         dirt: loadImage("dirt"),
         grass: loadImage("grass"),
@@ -16,7 +15,12 @@ const IMG = {
         log: loadImage("log"),
         wood: loadImage("wood"),
         sand: loadImage("sand"),
-        tallGrass: loadImage("tallGrass")
+        tallGrass: loadImage("tallGrass"),
+        player: {
+            idle: loadImage("player"),
+            jump: loadImage("player_jump"),
+            walk: [loadImage("player_walk0"), loadImage("player_walk1")]
+        }
     },
     AUDIO = {
         death: new Sound("oof", 0.5)

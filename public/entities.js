@@ -11,22 +11,25 @@ class Entity {
         this.game = g;
         this.gravity = 150;
         this.respawn = false;
+        this.aniCycle = 0;
     }
     draw(X, cx, cy) {
         //* add animation
-        if(typeof this.fill == 'string'){
+        this.refreshFill();
+        if (typeof this.fill == 'string') {
             X.uRect(this.x, this.y, this.width, this.height, this.fill, cx, cy);
         } else {
             X.uImg(this.fill, 0, 0, 0, 0, this.x, this.y, this.width, this.height, this.facing, cx, cy);
         }
     }
+    refreshFill() {}
     tick() {}
 }
 class Player extends Entity {
     constructor(g) {
         super(g);
         var sb = this.game.map.startBlock;
-        if(!sb){
+        if (!sb) {
             throw "Map not loaded, cannot place player";
         }
 
@@ -40,7 +43,7 @@ class Player extends Entity {
         this.x = sb[0];
         this.y = sb[1] - this.height;
         this.respawn = true;
-        this.fill = IMG.player;
+        this.fill = IMG.player.idle;
         this.socket = null;
     }
     tick(tt) {
@@ -51,7 +54,7 @@ class Player extends Entity {
             this.socket.send(this);
         }
 
-        if(this.respawn && this.y > this.game.map.height + 10){
+        if (this.respawn && this.y > this.game.map.height + 10) {
             this.die();
         }
     }
@@ -110,8 +113,7 @@ class Player extends Entity {
             t = this.game.screen.C.touch,
             s = 40 * tt,
             b = s * 15;
-        if (k[87] || k[38] || k[32] || t[0]) {
-            // up
+        if (k[87] || k[38] || k[32] || t[0]) { // up
             if (this.grounded) {
                 this.vy -= this.gravity * this.height * 0.25;
                 // this.vy -= s;
@@ -121,43 +123,59 @@ class Player extends Entity {
             this.lastK.u = false;
         }
 
-        if (k[83] || k[40] || k[16] || t[2]) {
-            // down
+        if (k[83] || k[40] || k[16] || t[2]) { // down
             this.vy += s;
             this.lastK.d = true;
         } else {
             this.lastK.d = false;
         }
 
-        if (k[65] || k[37] || t[1]) {
-            // left
+        if (k[65] || k[37] || t[1]) { // left
             if (this.lastK.l) {
                 this.vx -= s;
             } else {
                 this.vx -= k[16] ? s : b;
                 this.lastK.l = true;
             }
-            this.facing = true;
         } else {
             this.lastK.l = false;
         }
 
-        if (k[68] || k[39] || t[3]) {
-            // right
+        if (k[68] || k[39] || t[3]) { // right
             if (this.lastK.r) {
                 this.vx += s;
             } else {
                 this.vx += k[16] ? s : b;
                 this.lastK.r = true;
             }
-            this.facing = false;
         } else {
             this.lastK.r = false;
         }
     }
+    refreshFill() {
+        var p = IMG.player;
+        if (this.grounded) {
+            if (this.lastK.l != this.lastK.r) {
+                this.fill = p.walk[this.aniCycle++ % p.walk.length];
+            } else {
+                this.fill = p.idle;
+            }
+        } else {
+            this.fill = p.jump;
+        }
+
+        if (this.lastK.l != this.lastK.r) { // bitwise XOR
+            if (this.lastK.l) {
+                this.facing = true;
+            }
+            if (this.lastK.r) {
+                this.facing = false;
+            }
+        }
+    }
 }
 
-class Goomba extends Entity{
+class Goomba extends Entity {
     constructor(g) {
         super(g);
 
