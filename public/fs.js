@@ -4,9 +4,11 @@ function loadImage(e) {
     return a;
 }
 
-if (!Sound) {
+try {
+    Sound;
+} catch (e) {
     console.warn("sounds.js missing");
-    var Sound = function () {};
+    window.Sound = function () {};
 }
 
 const IMG = {
