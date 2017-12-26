@@ -41,6 +41,7 @@ class Socket {
 
         var a = JSON.parse("[" + e + "]"),
             r = [];
+        if(!this.splitL) return; //* change splitL to fix value
         for (let i = 0; i < a.length; i += this.splitL) {
             r.push(a.splice(i, i + this.splitL));
         }

@@ -1,10 +1,50 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>404</title>
 </head>
+
 <body>
+    <canvas id=cvs width=300 height=150></canvas>
+    <br>
     404 - Not found
+    <script>
+        const CVS = document.getElementById("cvs"),
+            X = CVS.getContext('2d'),
+            mouse = {
+                x: 0,
+                y: 0
+            },
+            IMG = new Image();
+        IMG.src = location.origin + "/img/404.png";
+
+        CVS.addEventListener("mousemove", function (e) {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+
+        function draw() {
+            X.fillStyle = "#0F0F0F";
+            X.fillRect(0, 0, CVS.width, CVS.height);
+
+            var GRA = X.createRadialGradient(mouse.x, mouse.y, 86, 150, 0, 0);
+            GRA.addColorStop(0, "#0F0F0F");
+            GRA.addColorStop(1, "#FFFFFF");
+
+            X.fillStyle = GRA;
+            X.fillRect(0, 0, CVS.width, CVS.height);
+
+            X.drawImage(IMG, 0, 0, IMG.width, IMG.height, 0, 0, CVS.width, CVS.height);
+        }
+        
+        function reqanf(){
+            draw();
+            requestAnimationFrame(reqanf);
+        }
+        reqanf();
+    </script>
 </body>
+
 </html>
