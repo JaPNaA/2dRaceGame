@@ -12,6 +12,7 @@ class Entity {
         this.gravity = 150;
         this.respawn = false;
         this.aniCycle = 0;
+        this.aniFps = 8;
     }
     draw(X, cx, cy) {
         //* add animation
@@ -40,15 +41,17 @@ class Player extends Entity {
             l: false,
             r: false
         };
+        this.skin = 1;
         this.x = sb[0];
         this.y = sb[1] - this.height;
         this.respawn = true;
-        this.fill = IMG.player.idle;
+        this.fill = IMG.player[this.skin].idle;
         this.socket = null;
     }
     tick(tt) {
         this.kbControl(tt);
         this.physics(tt);
+        this.aniCycle += tt;
 
         if (this.socket) {
             this.socket.send(this);
@@ -153,10 +156,10 @@ class Player extends Entity {
         }
     }
     refreshFill() {
-        var p = IMG.player;
+        var p = IMG.player[this.skin], fr = Math.floor(this.aniCycle * this.aniFps);
         if (this.grounded) {
             if (this.lastK.l != this.lastK.r) {
-                this.fill = p.walk[this.aniCycle++ % p.walk.length];
+                this.fill = p.walk[fr % p.walk.length];
             } else {
                 this.fill = p.idle;
             }
@@ -171,6 +174,8 @@ class Player extends Entity {
             if (this.lastK.r) {
                 this.facing = false;
             }
+        } else {
+            this.aniCycle = 0;
         }
     }
 }

@@ -24,11 +24,17 @@ const IMG = {
         wood: loadImage("wood"),
         sand: loadImage("sand"),
         tallGrass: loadImage("tallGrass"),
-        player: {
-            idle: loadImage("player"),
-            jump: loadImage("player_jump"),
-            walk: [loadImage("player_walk0"), loadImage("player_walk1")]
-        }
+        player: [{
+                idle: loadImage("player/0/idle"),
+                jump: loadImage("player/0/jump"),
+                walk: [loadImage("player/0/walk/0"), loadImage("player/0/walk/1")]
+            },
+            {
+                idle: loadImage("player/1/idle"),
+                jump: loadImage("player/1/jump"),
+                walk: [loadImage("player/1/walk/0"), loadImage("player/1/walk/1"), loadImage("player/1/walk/2")]
+            }
+        ]
     },
     AUDIO = {
         death: new Sound("oof", 0.5)
