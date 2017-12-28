@@ -24,6 +24,7 @@ const IMG = {
         wood: loadImage("wood"),
         sand: loadImage("sand"),
         tallGrass: loadImage("tallGrass"),
+        background: loadImage("background"),
         player: [{
                 idle: loadImage("player/0/idle"),
                 jump: loadImage("player/0/jump"),

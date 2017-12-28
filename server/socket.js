@@ -10,24 +10,24 @@ function toFloat32Array(b) {
 }
 
 class Socket {
-    constructor(s) {
+    constructor(server, speed) {
         var that = this;
 
         this.websocket = new ws.server({
-            httpServer: s
+            httpServer: server.server
         });
         this.clients = [];
         this.currId = 0;
 
         this.websocket.on("request", e => that.onRequest(e));
-        setInterval(() => that.tickMessage(), 50);
+        setInterval(() => that.tickMessage(), speed);
     }
     onRequest(r) {
         var C = r.accept(null, r.origin),
             that = this;
         this.clients.push(C);
 
-        console.log("Clients connected:", this.clients.length + 1);
+        console.log("Clients connected:", this.clients.length);
 
         C.id = this.currId++;
 

@@ -33,7 +33,9 @@ class Canvas {
             }
 
             that.touchdown = true;
-        }, { passive: false });
+        }, {
+            passive: false
+        });
         addEventListener("touchmove", function (e) {
             e.preventDefault();
             var a = e.changedTouches[0],
@@ -44,7 +46,7 @@ class Canvas {
             that.touch.length = 0;
             if (b[0] > that.startTouch[0] + 32) {
                 that.touch[3] = true;
-            } else if (b[0] < that.startTouch[0] - 32){
+            } else if (b[0] < that.startTouch[0] - 32) {
                 that.touch[1] = true;
             }
             if (b[1] > that.startTouch[1] - 32) {
@@ -53,26 +55,31 @@ class Canvas {
                 that.touch[0] = true;
             }
 
-        }, { passive: false });
+        }, {
+            passive: false
+        });
         addEventListener("touchend", function (e) {
             e.preventDefault();
             that.touch.length = 0;
             if (e.touches.length == 0) that.touchdown = false;
-        }, { passive: false });
+        }, {
+            passive: false
+        });
 
         addEventListener("resize", () => that.resize());
         addEventListener("mousemove", () => that.mouseMove());
-        addEventListener("keydown", function(e) {
+        addEventListener("keydown", function (e) {
             if (!e.ctrlKey && ![122].includes(e.keyCode)) e.preventDefault();
             that.key[e.keyCode] = true;
         });
-        addEventListener("blur", function() {
+        addEventListener("blur", function () {
             that.key.length = 0;
         });
-        addEventListener("keyup", function(e) {
+        addEventListener("keyup", function (e) {
             if (!e.ctrlKey) e.preventDefault();
             that.key[e.keyCode] = false;
         });
+        addEventListener("contextmenu", e => e.preventDefault());
         this.resize();
     }
     resize(e) {
@@ -91,7 +98,7 @@ class Canvas {
         if (!this.hideMouse) return;
         clearTimeout(this.hideMouseSI);
         this.canvas.style.cursor = "default";
-        this.hideMouseSI = setTimeout(function() {
+        this.hideMouseSI = setTimeout(function () {
             if (!that.hideMouse) return;
             that.canvas.style.cursor = "none";
         }, 1500);

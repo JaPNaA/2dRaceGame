@@ -14,11 +14,12 @@ class Screen {
             touchmove: [],
             touchend: [],
             click: [],
+            auxclick: [],
             keydown: [],
             keyup: [],
             wheel: []
         };
-        this.eventHandler = function(e) {
+        this.eventHandler = function (e) {
             for (let i of that.events[e.type]) {
                 i(e);
             }
@@ -42,7 +43,7 @@ class Screen {
     reqanf() {
         if (!this.active) return;
         var that = this;
-        requestAnimationFrame(function() {
+        requestAnimationFrame(function () {
             that.draw();
             that.reqanf();
         });
@@ -74,8 +75,9 @@ class Screen {
             h = innerHeight,
             n = Date.now(),
             that = this;
+
         function reqanf() {
-            requestAnimationFrame(function() {
+            requestAnimationFrame(function () {
                 if (
                     w != innerWidth ||
                     h != innerHeight ||
@@ -119,7 +121,7 @@ class StartScreen extends Screen {
 
         var that = this;
         this.obs.push({
-            draw: function(X) {
+            draw: function (X) {
                 X.sFill("#000");
                 X.uText("Mario Ripoff", 0, -1, "#FFF", "2px Arial", 1);
                 X.uText(
@@ -134,7 +136,7 @@ class StartScreen extends Screen {
                 // X.uGrid();
             }
         });
-        this.on("click touchstart", function() {
+        this.on("click touchstart", function () {
             that.end();
             main.game();
         });
@@ -155,13 +157,13 @@ class GameScreen extends Screen {
         this.obs.push(this.game);
         this.tickLoop = true;
         C.hideMouse = true;
-        this.on("wheel", function(e){
-            if(e.deltaY < 0){
-                if(--that.scale < that.minScale){
+        this.on("wheel", function (e) {
+            if (e.deltaY < 0) {
+                if (--that.scale < that.minScale) {
                     that.scale = that.minScale;
                 }
             } else {
-                if(++that.scale > that.maxScale){
+                if (++that.scale > that.maxScale) {
                     that.scale = that.maxScale;
                 }
             }

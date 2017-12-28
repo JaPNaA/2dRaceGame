@@ -26,7 +26,7 @@ var Socket = require("./server/socket.js").Socket,
 var server = new Server();
 server.listen();
 
-new Socket(server.server);
+new Socket(server, 50);
 
 function questionOpenBrowser(e) {
     var rl = readLine.createInterface({

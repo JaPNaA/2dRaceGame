@@ -52,15 +52,11 @@ class Game {
         for (let i = this.map.layers - 1; i >= 0; i--) {
             let ss = Math.ceil(this.screen.scale / 2);
             for (
-                let y = Math.floor(this.cameraY + ofy) - ss;
-                y < this.cameraY - ofy + ss;
-                y++
+                let y = Math.floor(this.cameraY + ofy) - ss; y < this.cameraY - ofy + ss; y++
             ) {
                 let al = this.map.width;
                 for (
-                    let x = Math.floor(this.cameraX + ofx) - ss;
-                    x < this.cameraX - ofx + ss;
-                    x++
+                    let x = Math.floor(this.cameraX + ofx) - ss; x < this.cameraX - ofx + ss; x++
                 ) {
                     // let a = this.map.getBlock(x, y);
                     // if (!a) continue;
@@ -137,8 +133,7 @@ class Game {
             null,
             null,
             null,
-            null,
-            {
+            null, {
                 lum: lum
             },
             this.cameraX,
@@ -147,6 +142,7 @@ class Game {
     }
     background(X) {
         X.sFill("#5ab3ff");
+        // X.uImg(IMG.background, 0, 0, IMG.width, IMG.height, 0, 0, this.screen.C.width, this.screen.C.height);
     }
     addPlayer(e) {
         var p = new Player(this);

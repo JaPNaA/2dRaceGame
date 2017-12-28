@@ -49,7 +49,7 @@ class Server {
         var that = this;
         this.server.listen(this.port, () => {
             let p = that.server.address().port;
-            console.log("Attempting host on port: " + p);
+            console.log("Hosting on port: " + p);
             that.port = p;
         });
 
