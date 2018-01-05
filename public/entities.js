@@ -158,7 +158,7 @@ class Player extends Entity {
     refreshFill() {
         var p = IMG.player[this.skin], fr = Math.floor(this.aniCycle * this.aniFps);
         if (this.grounded) {
-            if (this.lastK.l != this.lastK.r) {
+            if (this.lastK.l ^ this.lastK.r) {
                 this.fill = p.walk[fr % p.walk.length];
             } else {
                 this.fill = p.idle;
@@ -167,7 +167,7 @@ class Player extends Entity {
             this.fill = p.jump;
         }
 
-        if (this.lastK.l != this.lastK.r) { // bitwise XOR
+        if (this.lastK.l ^ this.lastK.r) {
             if (this.lastK.l) {
                 this.facing = true;
             }

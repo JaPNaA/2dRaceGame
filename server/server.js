@@ -1,6 +1,10 @@
 const http = require("http"),
     fs = require("fs"),
-    os = require("os");
+    os = require("os"),
+    pointers = {
+        "/leveleditor": "/levelEditor/index.html",
+        "/admin": "/admin/index.html"
+    };
 
 class Server {
     constructor() {
@@ -11,13 +15,14 @@ class Server {
     listener(q, r) {
         var url = q.url,
             odt = false,
-            mime; {
+            mime; 
+            
+        {
+            let urlLc = url.toLowerCase();
             if (url.length <= 1) {
                 url = "/index.html";
             }
-            if (url.toLowerCase() == "/leveleditor") {
-                url = "/levelEditor/index.html";
-            }
+            url = pointers[urlLc] || url;
             url = "public" + url;
         }
         mime = url.split(".");
