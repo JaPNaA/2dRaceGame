@@ -2,7 +2,7 @@
   "name": "2dracegame",
   "version": "1.0.0",
   "description": "Project suggested by <a href=\"https://github.com/roxasbtg\"> @RoxasBTG </a>",
-  "main": "node_main.js",
+  "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

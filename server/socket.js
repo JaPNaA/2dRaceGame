@@ -1,4 +1,5 @@
-const ws = require("websocket");
+const ws = require("websocket"),
+      Player = require("./player.js").Player;
 
 function toFloat32Array(b) {
     var a = new ArrayBuffer(b.length);
@@ -26,6 +27,8 @@ class Socket {
         var C = r.accept(null, r.origin),
             that = this;
         this.clients.push(C);
+
+        new Player(C);
 
         console.log("Clients connected:", this.clients.length);
 

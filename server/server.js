@@ -41,12 +41,12 @@ class Server {
                     if (e) return;
                     r.end(c);
                 });
-                return;
+            } else {
+                r.writeHead(200, {
+                    "content-type": mime || "text/plain"
+                });
+                r.end(c);
             }
-            r.writeHead(200, {
-                "content-type": mime || "text/plain"
-            });
-            r.end(c);
             console.log(q.connection.remoteAddress + " -> " + url + " :" + mime + ", " + (e ? 404 : 200));
         });
     }
